@@ -3,17 +3,406 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>   محاكي الفحص السريري</title>
+  <title>الزيتونة الطبية | محاكي السيرة المرضية والفحص السريري</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body, html {
-      margin: 0; padding: 0; height: 100%; width: 100%;
-      overflow: hidden; background-color: #eef3f9;
+    :root {
+      --navy: #12305c; --navy-2: #1e4b8a; --teal: #0f766e;
+      --ink: #1f2937; --muted: #64748b; --line: #e2e8f0;
+      --bg: #eef3f9; --card: #ffffff; --danger: #b91c1c;
     }
-    iframe { width: 100%; height: 100%; border: none; display: block; }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { min-height: 100%; }
+    body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); direction: rtl; text-align: right; font-family: 'Tajawal', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+    #app { flex: 1 0 auto; width: 100%; padding: clamp(10px, 1.4vw, 22px); display: flex; flex-direction: column; gap: clamp(12px, 1.2vw, 18px); }
+    
+    .api-banner { background: #fffbeb; border: 1px solid #fcd34d; padding: 10px 18px; border-radius: 12px; display: flex; gap: 10px; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .api-banner input { flex: 1; padding: 8px 12px; border: 1px solid #fbbf24; border-radius: 8px; font-family: inherit; font-size: 14px; direction: ltr; }
+    .api-banner label { font-size: 13.5px; font-weight: 700; color: #b45309; white-space: nowrap; }
+
+    .topbar { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%); color: #fff; border-radius: 16px; padding: 18px 22px; box-shadow: 0 10px 24px rgba(18, 48, 92, 0.25); }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .logo { font-size: 30px; background: rgba(255,255,255,0.16); border-radius: 14px; padding: 8px 12px; }
+    .topbar h1 { margin: 0; font-size: 21px; font-weight: 700; }
+    .topbar p { margin: 4px 0 0; font-size: 13px; opacity: 0.88; }
+    .top-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .cat-picker { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.35); border-radius: 10px; padding: 6px 10px; font-size: 13.5px; }
+    .cat-picker span { opacity: 0.85; font-weight: 700; }
+    .cat-picker select { background: #fff; color: var(--navy); border: none; border-radius: 7px; padding: 6px 8px; font-family: inherit; font-size: 13.5px; font-weight: 700; max-width: 220px; cursor: pointer; }
+    .case-count { font-size: 13px; opacity: 0.88; white-space: nowrap; }
+    .cat-pill { background: #dbeafe; color: #1e40af; }
+    
+    .primary-btn { background: #10b981; color: #fff; border: none; border-radius: 10px; padding: 11px 18px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform .15s ease, background .15s ease; }
+    .primary-btn:hover { background: #059669; transform: translateY(-1px); }
+    .ghost-btn { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.45); border-radius: 10px; padding: 11px 18px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: background .15s ease; }
+    .ghost-btn:hover { background: rgba(255,255,255,0.22); }
+    .ghost-btn.wide { width: 100%; background: #f1f5f9; color: #334155; border: 1px solid var(--line); margin-top:14px; }
+    .ghost-btn.wide:hover { background: #e2e8f0; }
+
+    .layout { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(14px, 1.4vw, 20px); align-items: stretch; min-height: 0; }
+    .patient-card { display: flex; align-items: center; gap: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06); }
+    .avatar { font-size: 30px; background: #e0ecff; border-radius: 50%; width: 58px; height: 58px; display: flex; align-items: center; justify-content: center; }
+    .patient-meta { flex: 1; }
+    .patient-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .patient-name { font-size: 20px; font-weight: 700; color: var(--navy); }
+    .pill { background: #e2e8f0; color: #334155; border-radius: 20px; padding: 3px 12px; font-size: 13px; font-weight: 700; }
+    .cc-line { margin-top: 8px; font-size: 15px; background: #fef2f2; border: 1px solid #fecaca; color: var(--danger); border-radius: 10px; padding: 8px 12px; }
+    .cc-label { font-weight: 700; }
+
+    .chat-window { background: var(--card); border: 1px solid var(--line); border-radius: 14px; flex: 1 1 auto; min-height: 340px; overflow-y: auto; padding: 18px; margin-top: 14px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06); }
+    .bubble { max-width: 84%; padding: 11px 16px; border-radius: 16px; line-height: 1.75; font-size: 15px; white-space: pre-wrap; word-wrap: break-word; }
+    .bubble.doctor { background: #0ea5e9; color: #fff; align-self: flex-start; border-bottom-right-radius: 3px; }
+    .bubble.patient { background: #f8fafc; border: 1px solid var(--line); color: #334155; align-self: flex-end; border-bottom-left-radius: 3px; }
+    .bubble.exam { background: #fffbeb; border: 1px solid #fcd34d; color: #4b3a0b; align-self: stretch; max-width: 100%; border-radius: 12px; font-size: 14.5px; }
+    .exam-tag { font-weight: 700; color: #b45309; margin-bottom: 6px; font-size: 13.5px; }
+    .bubble.eval { background: #f5f3ff; border: 1px solid #ddd6fe; color: #312e81; align-self: stretch; max-width: 100%; border-radius: 12px; font-size: 14.5px; }
+    .eval-tag { font-weight: 700; color: #5b21b6; margin-bottom: 8px; font-size: 13.5px; }
+    
+    .sys-note { align-self: center; text-align: center; background: #e2e8f0; color: #475569; font-size: 12.5px; font-weight: 700; border-radius: 999px; padding: 6px 18px; }
+    .composer { display: flex; gap: 10px; margin-top: 14px; align-items: stretch; }
+    .composer textarea { flex: 1; resize: vertical; min-height: 52px; border-radius: 12px; border: 1px solid var(--line); padding: 12px 14px; font-family: inherit; font-size: 15px; line-height: 1.6; background: #fff; }
+    .send-btn { background: var(--teal); color: #fff; border: none; border-radius: 12px; padding: 0 26px; font-family: inherit; font-size: 16px; font-weight: 700; cursor: pointer; transition: background .15s ease; min-width: 110px; }
+    .send-btn:disabled { background: #94a3b8; cursor: progress; }
+    
+    .panel-box { margin-top: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+    .panel-title { font-size: 13px; color: var(--muted); margin-bottom: 10px; font-weight: 700; }
+    
+    .session-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+    .eval-btn { background: linear-gradient(135deg, #6d28d9 0%, #4f46e5 100%); color: #fff; border: none; border-radius: 12px; padding: 12px 20px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25); }
+    .eval-btn:disabled { background: #cbd5e1; color: #475569; box-shadow: none; }
+    
+    .exam-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .exam-btn { background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 10px; padding: 12px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+    .exam-btn.vitals-btn { grid-column: 1 / -1; background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
+    
+    .chips-body { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { background: #f1f5f9; border: 1px solid var(--line); color: #334155; border-radius: 20px; padding: 7px 13px; font-family: inherit; font-size: 13.5px; cursor: pointer; }
+    
+    .sheet-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06); }
+    .sheet-card h2 { margin: 0 0 6px; font-size: 18px; color: var(--navy); }
+    .sheet-card label { display: block; margin: 12px 0 5px; font-size: 13.5px; font-weight: 700; color: #334155; }
+    .sheet-card textarea { width: 100%; resize: vertical; border-radius: 10px; border: 1px solid var(--line); padding: 9px 11px; font-family: inherit; font-size: 14px; line-height: 1.6; background: #fbfdff; }
+    
+    .answer-panel { margin-top: 16px; background: #fffbeb; border: 1px dashed #fbbf24; border-radius: 14px; padding: 16px 18px; }
+    .answer-panel h3 { margin: 0 0 10px; font-size: 17px; color: #b45309; }
+    .diag-line { background: #fff; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 12px; font-weight: 700; color: #92400e; margin-bottom: 12px; font-size: 16px; }
+    .answer-row { font-size: 14px; line-height: 1.8; color: #4b5563; margin-bottom: 8px; }
+    .answer-row b { color: #92400e; }
+    
+    .site-footer { flex: 0 0 auto; display: flex; justify-content: center; align-items: center; padding: 14px 0; }
+    .ig-link { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--navy); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 9px 20px; font-size: 15px; font-weight: 700; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06); }
+    
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .chat-window { height: 46vh; min-height: 300px; }
+      .topbar { flex-direction: column; align-items: stretch; }
+      .api-banner { flex-direction: column; align-items: stretch; }
+    }
   </style>
 </head>
 <body>
-  <!-- لاحظ استخدام null.perchance.org بدلاً من perchance.org -->
-  <iframe src="https://null.perchance.org/hmr2kwjz42" allow="fullscreen"></iframe>
+<div id="app">
+  <div class="api-banner">
+    <label for="apiKey">🔑 مفتاح Gemini API:</label>
+    <input type="password" id="apiKey" placeholder="أدخل مفتاحك المجاني من Google AI Studio ليعمل المحاكي...">
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">🩺</div>
+      <div>
+        <h1>محاكي السيرة المرضية والفحص السريري</h1>
+        <p>المريض يعرف مرضه ولا يخبرك به — اسأل، افحص، ثم املأ ورقة المريض</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <label class="cat-picker"><span>التخصص</span><select id="catFilterEl"></select></label>
+      <span class="case-count" id="caseCountEl">—</span>
+      <button id="revealBtn" class="ghost-btn">إظهار الحل</button>
+      <button id="newCaseBtn" class="primary-btn">حالة جديدة</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="chat-col">
+      <div class="patient-card">
+        <div class="avatar" id="patientAvatar">؟</div>
+        <div class="patient-meta">
+          <div class="patient-name-row">
+            <span class="patient-name" id="patientNameEl">—</span>
+            <span class="pill" id="patientAgeEl">—</span>
+            <span class="pill" id="patientSexEl">—</span>
+            <span class="pill cat-pill" id="patientCatEl">—</span>
+          </div>
+          <div class="cc-line">
+            <span class="cc-label">الشكوى الرئيسية:</span>
+            <span id="ccEl">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-window" id="chatWindow"></div>
+
+      <div class="composer">
+        <textarea id="doctorInput" rows="2" placeholder="اكتب سؤالك للمريض هنا... (Enter للإرسال)"></textarea>
+        <button id="sendBtn" class="send-btn">إرسال</button>
+      </div>
+
+      <div class="session-bar">
+        <button id="evalBtn" class="eval-btn" type="button">🎓 إنهاء الجلسة وتقييم الأداء</button>
+      </div>
+
+      <div class="panel-box">
+        <div class="panel-title">الفحص السريري — اضغط للفحص:</div>
+        <div class="exam-grid" id="examGrid"></div>
+      </div>
+
+      <div class="panel-box">
+        <div class="panel-title">أسئلة جاهزة — اضغط لإدراجها:</div>
+        <div class="chips-body" id="chipsBody"></div>
+      </div>
+    </section>
+
+    <aside class="sheet-col">
+      <div class="sheet-card">
+        <h2>ورقة المريض (اكتب ملاحظاتك)</h2>
+        <label>العلامات الحيوية</label><textarea id="sheet_vitals" rows="2"></textarea>
+        <label>الشكوى الرئيسية</label><textarea id="sheet_cc" rows="2"></textarea>
+        <label>تاريخ المرض الحالي</label><textarea id="sheet_hpi" rows="5"></textarea>
+        <label>الأمراض السابقة (PMH)</label><textarea id="sheet_pmh" rows="2"></textarea>
+        <label>العمليات ونقل الدم (PSH)</label><textarea id="sheet_psh" rows="2"></textarea>
+        <label>التاريخ العائلي (FH)</label><textarea id="sheet_fh" rows="2"></textarea>
+        <label>الأدوية والحساسية (DH)</label><textarea id="sheet_meds" rows="2"></textarea>
+        <label>التاريخ الاجتماعي (SH)</label><textarea id="sheet_sh" rows="2"></textarea>
+        <button id="clearSheetBtn" class="ghost-btn wide">تفريغ الورقة</button>
+      </div>
+      <div class="answer-panel" id="answerPanel" hidden></div>
+    </aside>
+  </main>
+</div>
+
+<script>
+const namesPool = { female: ["فاطمة", "مريم", "نورة", "سارة"], male: ["أحمد", "محمود", "خالد", "عبدالله"] };
+
+// أضف أي حالات جديدة هنا بسهولة
+const CASES = [
+  {
+    cat: "الجراحة العامة", sex: "male", ageMin: 18, ageMax: 28,
+    diag: "التهاب الزائدة الدودية الحاد (Acute Appendicitis)",
+    cc: "بطني يوجعني وما قادر أرتاح",
+    story: {
+      hpi: "بدأ الوجع أمس قرب السرة، كان خفيف ويجي ويروح. اليوم انتقل لأسفل الجهة اليمنى وصار ثقيل وقوي. أحس بغثيان وما لي نفس آكل. الوجع يزيد لما أتحرك أو أكح.",
+      pmh: "لا أعاني من أي مرض مزمن، ولم أُدخل المستشفى من قبل. ولا عندي ربو.",
+      psh: "لا يوجد أي عملية سابقة، ولم أحتاج نقل دم.",
+      fh: "لا يوجد تاريخ عائلي لأمراض مشابهة.",
+      meds: "أخذت حبتين مسكن وما خفف الوجع. لا حساسية.",
+      sh: "طالب جامعي، أسكن في سكن الطلبة، لا أدخن.",
+      extra: "التبول طبيعي. ما أكلت شي غريب."
+    },
+    exam: {
+      vitals: { bp: "118/75", hr: "92", rr: "18", temp: "38.0" },
+      head: "المريض واعٍ ومتجاوب، يبدو متوعكاً.",
+      abd: "حسّاسية شديدة عند اللمس في الربع السفلي الأيمن عند نقطة ماكبرني، مع دفاع عضلي. علامة روفسنغ إيجابية.",
+      upper: "طبيعي.", lower: "طبيعي.",
+      extra: [ { label: "تحليل الدم", q: "اطلب تحليل دم", find: "كريات بيضاء 14.2، CRP 55." } ]
+    }
+  },
+  {
+    cat: "جراحة العظام", sex: "male", ageMin: 45, ageMax: 60,
+    diag: "خشونة مفصل الركبة المتقدمة (Severe Knee Osteoarthritis)",
+    cc: "ركبتي اليمين توجعني وما أقدر أمشي مسافات",
+    story: {
+      hpi: "الوجع صار له شهور ويزيد مع الأيام، خصوصاً لما أطلع السلم أو أمشي مسافة. أحس بتصلب في المفصل الصبح بس يفك بعد ربع ساعة. أحياناً أسمع صوت طقطقة لما أثنيها.",
+      pmh: "عندي ضغط دم مرتفع وآخذ علاجه. وزني زايد شوي.",
+      psh: "ما سويت أي عملية جراحية من قبل.",
+      fh: "أمي كان عندها نفس المشكلة في ركبها.",
+      meds: "آخذ حبوب الضغط (أملوديبين) وحبوب بروفين للوجع عند اللزوم. ما عندي حساسية.",
+      sh: "أشتغل مدرس، وأوقف كثير. ما أدخن.",
+      extra: "ما طحت عليها ولا انصابت، الوجع إجى تدريجي."
+    },
+    exam: {
+      vitals: { bp: "140/90", hr: "78", rr: "16", temp: "36.8" },
+      head: "طبيعي، لا يوجد اصفرار ولا شحوب.",
+      abd: "طبيعي، لا يوجد إيلام.",
+      upper: "طبيعي، النبض متساوي.",
+      lower: "تورم عظمي خفيف في الركبة اليمنى، طقطقة محسوسة (Crepitus) عند ثني الركبة، تحديد في مدى الحركة، ألم عند الضغط. لا يوجد حرارة.",
+      extra: [ { label: "صورة أشعة سينية", q: "اطلب أشعة X-Ray", find: "ضيق شديد في المسافة المفصلية، وتكون نتوءات عظمية." } ]
+    }
+  }
+];
+
+const CHIPS = ["متى بدأ الوجع بالضبط؟", "وين مكان الوجع تحديداً؟", "هل يزيد أو يخف بشيء؟", "هل تعاني من أمراض مزمنة؟", "هل أجريت عمليات سابقة؟"];
+const EXAMS = [
+  { key: "vitals", label: "📊 قياس العلامات الحيوية", q: "سأقيس الآن علاماتك الحيوية: الضغط والنبض والتنفس والحرارة." },
+  { key: "head", label: "فحص الرأس والعنق", q: "سأفحص الآن رأسك وعنقك." },
+  { key: "abd", label: "فحص البطن", q: "سأقوم الآن بفحص بطنك." },
+  { key: "upper", label: "فحص الأطراف العلوية", q: "سأفحص الآن أطرافك العلوية." },
+  { key: "lower", label: "فحص الأطراف السفلية", q: "سأفحص الآن أطرافك السفلية." }
+];
+
+let state = { caseIdx: -1, caseData: null, patient: null, messages: [], busy: false, evaluated: false };
+const chatWindowEl = document.getElementById("chatWindow");
+const doctorInputEl = document.getElementById("doctorInput");
+
+const RULES = `أنت تمثّل دور مريض في تدريب طبي، ومعك راوٍ سريري.
+[A] للمريض: ابدأ الرد بالوسم [كلام]. تكلم بالعربية العامية كشخص بسيط.
+[B] للفحص السريري: ابدأ الرد بالوسم [فحص]. اكتب النتائج بالعربية الفصحى بدقة كراوٍ.
+[C] للتقييم: ابدأ الرد بالوسم [تقييم] وتحدث كمدرّب فصيح مع وضع المصطلحات بالإنجليزية. لا تخرج عن هذه الوسوم.`;
+
+function casePrefix() {
+  const p = state.patient, c = state.caseData, s = c.story, e = c.exam, v = e.vitals;
+  let log = state.messages.map(m => (m.role==="doctor" ? "الطبيب: ": m.mode==="exam" ? "[فحص] " : p.name+": ") + m.text).join("\n");
+  return `${RULES}\n\n<ملفي السري>\nالاسم: ${p.name} | العمر: ${p.age} | الشكوى: ${c.cc}\nالقصة: ${s.hpi}\nالأمراض: ${s.pmh}\nالعمليات: ${s.psh}\nعائلي: ${s.fh}\nأدوية: ${s.meds}\nاجتماعي: ${s.sh}\nفحص الرأس: ${e.head}\nفحص البطن: ${e.abd}\nالأطراف العلوية: ${e.upper}\nالأطراف السفلية: ${e.lower}\nحيوية: الضغط ${v?v.bp:''} | النبض ${v?v.hr:''} | التنفس ${v?v.rr:''} | الحرارة ${v?v.temp:''}\n</ملفي السري>\n\n<المحادثة>\n${log}\n</المحادثة>`;
+}
+
+function addBubble(role, text, mode) {
+  const div = document.createElement("div");
+  const kind = role === "doctor" ? "doctor" : role === "evaluator" ? "eval" : "patient";
+  div.className = "bubble " + kind + (mode === "exam" ? " exam" : "");
+  if (mode === "exam") div.innerHTML = '<div class="exam-tag">🔍 الفحص السريري</div>';
+  if (mode === "eval") div.innerHTML = '<div class="eval-tag">🎓 تقرير المدرّب</div>';
+  const body = document.createElement("div");
+  body.innerHTML = text.replace(/\n/g, "<br>");
+  div.appendChild(body);
+  chatWindowEl.appendChild(div);
+  chatWindowEl.scrollTop = chatWindowEl.scrollHeight;
+}
+
+function parseReply(text) {
+  let mode = "patient";
+  let cleanText = text.trim();
+  if(cleanText.includes("[فحص]")) { mode = "exam"; cleanText = cleanText.replace(/\[فحص\]/g,""); }
+  else if(cleanText.includes("[تقييم]")) { mode = "eval"; cleanText = cleanText.replace(/\[تقييم\]/g,""); }
+  else { cleanText = cleanText.replace(/\[كلام\]/g,""); }
+  return { mode, text: cleanText.trim() };
+}
+
+// الاتصال المباشر بجوجل
+async function callGemini(instruction) {
+  const apiKey = document.getElementById("apiKey").value.trim();
+  if (!apiKey) throw new Error("يرجى إدخال مفتاح Gemini API في المربع أعلى الصفحة.");
+  
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: instruction }] }]
+    })
+  });
+  
+  if (!response.ok) throw new Error("مفتاح API غير صالح أو يوجد مشكلة في الاتصال.");
+  const data = await response.json();
+  return data.candidates[0].content.parts[0].text;
+}
+
+async function sendQuestion(text) {
+  if (!text.trim() || state.busy) return;
+  addBubble("doctor", text);
+  state.messages.push({ role: "doctor", text: text });
+  doctorInputEl.value = "";
+  document.getElementById("sendBtn").disabled = true;
+  state.busy = true;
+
+  try {
+    const prompt = casePrefix() + `\n\nاكتب رد المريض الآن. ابدأ الرد بالوسم [كلام]. وإذا طلب فحصاً استخدم الوسم [فحص].`;
+    const replyText = await callGemini(prompt);
+    const parsed = parseReply(replyText);
+    
+    addBubble(parsed.mode==="eval"?"evaluator":"patient", parsed.text, parsed.mode);
+    state.messages.push({ role: "patient", text: parsed.text, mode: parsed.mode });
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    state.busy = false;
+    document.getElementById("sendBtn").disabled = false;
+    doctorInputEl.focus();
+  }
+}
+
+async function runEvaluation() {
+  if (state.evaluated || state.busy) return;
+  state.evaluated = true;
+  document.getElementById("evalBtn").disabled = true;
+  state.busy = true;
+
+  addBubble("doctor", "إنهاء وتقييم الأداء");
+  const prompt = casePrefix() + `\n\nTASK: انتهت الجلسة. تخلّ عن دور المريض واكتب تقرير المدرّب السريري بالوسم [تقييم]. باللغة العربية مع المصطلحات بالإنجليزية. قيم أداء الطبيب واذكر النواقص والتشخيص الصحيح.`;
+  
+  try {
+    const replyText = await callGemini(prompt);
+    const parsed = parseReply(replyText);
+    addBubble("evaluator", parsed.text, "eval");
+    document.getElementById("revealBtn").click();
+  } catch (error) {
+    alert(error.message);
+    state.evaluated = false;
+    document.getElementById("evalBtn").disabled = false;
+  } finally {
+    state.busy = false;
+  }
+}
+
+function startNewCase() {
+  const c = CASES[Math.floor(Math.random() * CASES.length)];
+  state.caseData = c;
+  state.patient = { name: namesPool[c.sex][Math.floor(Math.random()*namesPool[c.sex].length)], age: c.ageMin, sex: c.sex };
+  state.messages = [];
+  state.evaluated = false;
+  
+  document.getElementById("patientNameEl").textContent = state.patient.name;
+  document.getElementById("patientAgeEl").textContent = state.patient.age + " سنة";
+  document.getElementById("patientSexEl").textContent = c.sex === "male" ? "ذكر" : "أنثى";
+  document.getElementById("ccEl").textContent = c.cc;
+  
+  chatWindowEl.innerHTML = "";
+  addBubble("doctor", `مرحباً، تفضل ما الذي يشغلك اليوم؟`);
+  addBubble("patient", c.cc, "patient");
+  state.messages.push({ role: "doctor", text: "مرحباً، ما الذي يشغلك؟" }, { role: "patient", text: c.cc, mode: "patient" });
+  
+  document.getElementById("evalBtn").disabled = false;
+  document.getElementById("answerPanel").hidden = true;
+  document.getElementById("clearSheetBtn").click();
+}
+
+document.getElementById("sendBtn").addEventListener("click", () => sendQuestion(doctorInputEl.value));
+doctorInputEl.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendQuestion(doctorInputEl.value); } });
+document.getElementById("newCaseBtn").addEventListener("click", startNewCase);
+document.getElementById("evalBtn").addEventListener("click", runEvaluation);
+document.getElementById("clearSheetBtn").addEventListener("click", () => document.querySelectorAll(".sheet-card textarea").forEach(t => t.value = ""));
+
+document.getElementById("revealBtn").addEventListener("click", () => {
+  const c = state.caseData;
+  const p = document.getElementById("answerPanel");
+  p.hidden = false;
+  p.innerHTML = `<h3>الإجابة النموذجية</h3><div class="diag-line">التشخيص: ${c.diag}</div>
+    <div class="answer-row"><b>القصة (HPI):</b> ${c.story.hpi}</div>
+    <div class="answer-row"><b>الأمراض (PMH):</b> ${c.story.pmh}</div>
+    <div class="answer-row"><b>العمليات (PSH):</b> ${c.story.psh}</div>
+    <div class="answer-row"><b>الأدوية:</b> ${c.story.meds}</div>
+    <div class="answer-row"><b>الفحص (العلامات):</b> الضغط ${c.exam.vitals.bp} | النبض ${c.exam.vitals.hr}</div>`;
+  p.scrollIntoView({ behavior: "smooth" });
+});
+
+const chipsBody = document.getElementById("chipsBody");
+CHIPS.forEach(q => {
+  const btn = document.createElement("button");
+  btn.className = "chip"; btn.textContent = q;
+  btn.onclick = () => { doctorInputEl.value = q; doctorInputEl.focus(); };
+  chipsBody.appendChild(btn);
+});
+
+const examGrid = document.getElementById("examGrid");
+EXAMS.forEach(ex => {
+  const btn = document.createElement("button");
+  btn.className = "exam-btn" + (ex.key === "vitals" ? " vitals-btn" : ""); 
+  btn.textContent = ex.label;
+  btn.onclick = () => sendQuestion(ex.q);
+  examGrid.appendChild(btn);
+});
+
+startNewCase();
+</script>
 </body>
 </html>
