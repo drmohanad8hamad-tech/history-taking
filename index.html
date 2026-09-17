@@ -143,11 +143,20 @@
   </footer>
 </div>
 
+<script src="src/cases/ortho-trauma.js"></script>
+<script src="src/cases/general-surgery.js"></script>
+<script src="src/cases/cardio-pulmo.js"></script>
+<script src="src/cases/gastro-hepato.js"></script>
+<script src="src/cases/nephro-urology.js"></script>
+<script src="src/cases/neurology.js"></script>
+<script src="src/cases/endo-rheum.js"></script>
+<script src="src/cases/obgyn.js"></script>
+<script src="src/cases/infectious-heme.js"></script>
+<script src="src/cases/ent-ophtho-emerg.js"></script>
+
 <script>
-// المكدس الذي يحتوي على جميع الحالات (الأساسية الـ 10 + الحالات التي ستضيفها أنت)
-const CASES = [
+const LEGACY_CASES = [
   {
-    cat: "الجراحة العامة",
     sex: "male", ageMin: 18, ageMax: 28,
     diag: "التهاب الزائدة الدودية الحاد (Acute Appendicitis)",
     cc: "بطني يوجعني وما قادر أرتاح",
@@ -173,7 +182,6 @@ const CASES = [
     }
   },
   {
-    cat: "القلب والصدر",
     sex: "male", ageMin: 52, ageMax: 66,
     diag: "احتشاء عضلة القلب الحاد (Acute Myocardial Infarction)",
     cc: "أحس بثقل ووجع شديد في صدري",
@@ -199,7 +207,6 @@ const CASES = [
     }
   },
   {
-    cat: "الجراحة العامة",
     sex: "female", ageMin: 40, ageMax: 58,
     diag: "التهاب المرارة الحاد مع حصوات (Acute Calculous Cholecystitis)",
     cc: "وجع شديد في أعلى بطني من الجهة اليمنى",
@@ -226,7 +233,6 @@ const CASES = [
     }
   },
   {
-    cat: "النساء والتوليد",
     sex: "female", ageMin: 24, ageMax: 34,
     diag: "حمل خارج الرحم الممزق (Ruptured Ectopic Pregnancy)",
     cc: "وجع في أسفل بطني وينزل مني دم خفيف",
@@ -253,7 +259,6 @@ const CASES = [
     }
   },
   {
-    cat: "الأعصاب",
     sex: "male", ageMin: 18, ageMax: 24,
     diag: "التهاب السحايا الجرثومي (Bacterial Meningitis)",
     cc: "صداع شديد وحرارة عالية ما تنزل",
@@ -279,7 +284,6 @@ const CASES = [
     }
   },
   {
-    cat: "الغدد والسكري والروماتيزم",
     sex: "female", ageMin: 18, ageMax: 26,
     diag: "الحماض الكيتوني السكري (Diabetic Ketoacidosis)",
     cc: "تعب شديد وغثيان وترجيع مستمر",
@@ -306,7 +310,6 @@ const CASES = [
     }
   },
   {
-    cat: "الأعصاب",
     sex: "male", ageMin: 58, ageMax: 72,
     diag: "جلطة دماغية حادة (Acute Ischemic Stroke)",
     cc: "إيدي اليمنى صارت ثقيلة وكلامي تلخبط",
@@ -332,7 +335,6 @@ const CASES = [
     }
   },
   {
-    cat: "الجهاز الهضمي والكبد",
     sex: "male", ageMin: 35, ageMax: 55,
     diag: "نزيف هضمي علوي من قرحة هضمية (Bleeding Peptic Ulcer)",
     cc: "تقيأت دم وبرازي صار أسود",
@@ -359,7 +361,6 @@ const CASES = [
     }
   },
   {
-    cat: "العظام والإصابات",
     sex: "male", ageMin: 20, ageMax: 34,
     diag: "تمزق الرباط الصليبي الأمامي (ACL Tear)",
     cc: "ركبتي تورمت وما أقدر أحمل وزني عليها",
@@ -385,7 +386,6 @@ const CASES = [
     }
   },
   {
-    cat: "الجراحة العامة",
     sex: "male", ageMin: 60, ageMax: 75,
     diag: "نقص تروية حاد في الطرف السفلي (Acute Limb Ischemia)",
     cc: "جاني وجع شديد مفاجئ في رجلي اليمنى وصارت باردة وشاحبة",
@@ -409,17 +409,26 @@ const CASES = [
         { label: "تخطيط القلب وتصوير الشرايين", q: "اطلب تخطيط القلب وتصوير الشرايين", find: "تخطيط القلب يُظهر رجفاناً أذينياً غير منتظم، وتصوير الشرايين يُظهر انسداداً في الشريان الفخذي الأيسر مع نقص التصريف — يوافق انسداداً شريانياً حاداً مصدره خثرة من القلب." }
       ]
     }
-  },
-
-  /* ========================================================================= */
-  /*  خطوة اللصق: ضع بقية الـ 100 حالة الخاصة بك هنا داخل هذه المصفوفة        */
-  /*  تأكد أن تنسخ من بعد علامة { وحتى } لكل حالة وتضع بينها فاصلة ( , )        */
-  /* ========================================================================= */
-
-  /* الصق هنا... */
-
-  /* ========================================================================= */
+  }
 ];
+
+const LEGACY_CATS = [
+  "الجراحة العامة",
+  "القلب والصدر",
+  "الجراحة العامة",
+  "النساء والتوليد",
+  "الأعصاب",
+  "الغدد والسكري والروماتيزم",
+  "الأعصاب",
+  "الجهاز الهضمي والكبد",
+  "العظام والإصابات",
+  "الجراحة العامة"
+];
+
+const CASES = LEGACY_CASES.concat(window.__CASES__ || []).map((c, i) => {
+  if (!c.cat) c.cat = LEGACY_CATS[i] || "متنوع";
+  return c;
+});
 
 const CATEGORIES = [];
 CASES.forEach(c => { if (!CATEGORIES.includes(c.cat)) CATEGORIES.push(c.cat); });
