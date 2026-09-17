@@ -3,10 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>محاكي السيرة المرضية والفحص السريري | Dr. Mohanad Hamad</title>
+  <title>محاكي السيرة المرضية والفحص السريري</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #12305c; --navy-2: #1e4b8a; --teal: #0f766e;
+    --ink: #1f2937; --muted: #64748b; --line: #e2e8f0;
+    --bg: #eef3f9; --card: #ffffff; --danger: #b91c1c;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { min-height: 100%; }
+  body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); direction: rtl; text-align: right; font-family: 'Tajawal', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+  #app { flex: 1 0 auto; width: 100%; padding: clamp(10px, 1.4vw, 22px); display: flex; flex-direction: column; gap: clamp(12px, 1.2vw, 18px); }
+  .topbar { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%); color: #fff; border-radius: 16px; padding: 18px 22px; box-shadow: 0 10px 24px rgba(18, 48, 92, 0.25); }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .logo { font-size: 30px; background: rgba(255,255,255,0.16); border-radius: 14px; padding: 8px 12px; }
+  .topbar h1 { margin: 0; font-size: 21px; font-weight: 700; }
+  .topbar p { margin: 4px 0 0; font-size: 13px; opacity: 0.88; }
+  .top-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .cat-picker { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.35); border-radius: 10px; padding: 6px 10px; font-size: 13.5px; }
+  .cat-picker span { opacity: 0.85; font-weight: 700; }
+  .cat-picker select { background: #fff; color: var(--navy); border: none; border-radius: 7px; padding: 6px 8px; font-family: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .case-count { font-size: 13px; opacity: 0.88; white-space: nowrap; }
+  .cat-pill { background: #dbeafe; color: #1e40af; }
+  .primary-btn { background: #10b981; color: #fff; border: none; border-radius: 10px; padding: 11px 18px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform .15s ease, background .15s ease; }
+  .primary-btn:hover { background: #059669; transform: translateY(-1px); }
+  .ghost-btn { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.45); border-radius: 10px; padding: 11px 18px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .ghost-btn:hover { background: rgba(255,255,255,0.22); }
+  .ghost-btn.wide { width: 100%; background: #f1f5f9; color: #334155; border: 1px solid var(--line); margin-top: 14px;}
+  .layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 20px; align-items: stretch; }
+  .patient-card { display: flex; align-items: center; gap: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06); }
+  .avatar { font-size: 30px; background: #e0ecff; border-radius: 50%; width: 58px; height: 58px; display: flex; align-items: center; justify-content: center; }
+  .patient-meta { flex: 1; }
+  .patient-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .patient-name { font-size: 20px; font-weight: 700; color: var(--navy); }
+  .pill { background: #e2e8f0; color: #334155; border-radius: 20px; padding: 3px 12px; font-size: 13px; font-weight: 700; }
+  .cc-line { margin-top: 8px; font-size: 15px; background: #fef2f2; border: 1px solid #fecaca; color: var(--danger); border-radius: 10px; padding: 8px 12px; }
+  .cc-label { font-weight: 700; }
+  .chat-window { background: var(--card); border: 1px solid var(--line); border-radius: 14px; flex: 1 1 auto; height: 340px; overflow-y: auto; padding: 18px; margin-top: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .bubble { max-width: 84%; padding: 11px 16px; border-radius: 16px; line-height: 1.75; font-size: 15px; white-space: pre-wrap; word-wrap: break-word; }
+  .bubble.doctor { background: #0ea5e9; color: #fff; align-self: flex-start; border-bottom-right-radius: 3px; }
+  .bubble.patient { background: #f8fafc; border: 1px solid var(--line); color: #334155; align-self: flex-end; border-bottom-left-radius: 3px; }
+  .bubble.exam { background: #fffbeb; border: 1px solid #fcd34d; color: #4b3a0b; align-self: stretch; max-width: 100%; border-radius: 12px; }
+  .exam-tag { font-weight: 700; color: #b45309; margin-bottom: 6px; font-size: 13.5px; }
+  .bubble.eval { background: #f5f3ff; border: 1px solid #ddd6fe; color: #312e81; align-self: stretch; max-width: 100%; border-radius: 12px; }
+  .sys-note { align-self: center; text-align: center; background: #e2e8f0; color: #475569; font-size: 12.5px; font-weight: 700; border-radius: 999px; padding: 6px 18px; }
+  .composer { display: flex; gap: 10px; margin-top: 14px; }
+  .composer textarea { flex: 1; resize: vertical; min-height: 52px; border-radius: 12px; border: 1px solid var(--line); padding: 12px 14px; font-family: inherit; font-size: 15px; }
+  .send-btn { background: var(--teal); color: #fff; border: none; border-radius: 12px; padding: 0 26px; font-weight: 700; cursor: pointer; min-width: 110px; }
+  .panel-box { margin-top: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+  .panel-title { font-size: 13px; color: var(--muted); margin-bottom: 10px; font-weight: 700; }
+  .session-bar { margin-top: 14px; }
+  .eval-btn { background: linear-gradient(135deg, #6d28d9 0%, #4f46e5 100%); color: #fff; border: none; border-radius: 12px; padding: 12px 20px; font-weight: 700; cursor: pointer; }
+  .exam-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .exam-btn { background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 10px; padding: 12px; font-weight: 700; cursor: pointer; }
+  .exam-btn.vitals-btn { grid-column: 1 / -1; background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
+  .chips-body { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { background: #f1f5f9; border: 1px solid var(--line); border-radius: 20px; padding: 7px 13px; cursor: pointer; }
+  .sheet-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .sheet-card label { display: block; margin: 12px 0 5px; font-size: 13.5px; font-weight: 700; }
+  .sheet-card textarea { width: 100%; border-radius: 10px; border: 1px solid var(--line); padding: 9px 11px; }
+  .answer-panel { margin-top: 16px; background: #fffbeb; border: 1px dashed #fbbf24; border-radius: 14px; padding: 16px; }
+  .diag-line { background: #fff; border: 1px solid #fde68a; border-radius: 10px; padding: 10px; font-weight: 700; color: #92400e; margin-bottom: 12px; }
+  .answer-row { font-size: 14px; line-height: 1.8; color: #4b5563; margin-bottom: 8px; }
+  .brand-credit { margin: 6px 0 0; font-size: 13px; display: inline-block; padding: 3px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.14); }
+  .site-footer { flex: 0 0 auto; display: flex; justify-content: center; align-items: center; padding: 14px 0; }
+  .ig-link { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--navy); background: var(--card); border-radius: 999px; padding: 9px 20px; font-weight: 700; border: 1px solid var(--line); }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .chat-window { height: 46vh; } }
+</style>
 </head>
 <body>
-
 <div id="app">
   <header class="topbar">
     <div class="brand">
@@ -14,14 +81,11 @@
       <div>
         <h1>محاكي السيرة المرضية والفحص السريري</h1>
         <p>المريض يعرف مرضه ولا يخبرك به — اسأل، افحص، ثم املأ ورقة المريض</p>
-        <p class="brand-credit">تطوير وإدارة المنصة: <b>DR. Mohanad Hamad</b></p>
+        <p class="brand-credit">تطوير المنصة: <b>DR. Mohanad Hamad</b></p>
       </div>
     </div>
     <div class="top-actions">
-      <label class="cat-picker" for="catFilterEl">
-        <span>التخصص</span>
-        <select id="catFilterEl"></select>
-      </label>
+      <label class="cat-picker" for="catFilterEl"><span>التخصص</span><select id="catFilterEl"></select></label>
       <span class="case-count" id="caseCountEl">—</span>
       <button id="revealBtn" class="ghost-btn">إظهار الحل</button>
       <button id="newCaseBtn" class="primary-btn">حالة جديدة</button>
@@ -49,27 +113,21 @@
       <div class="chat-window" id="chatWindow"></div>
 
       <div class="composer">
-        <textarea id="doctorInput" rows="2" placeholder="اكتب سؤالك للمريض هنا... (Enter للإرسال، Shift+Enter لسطر جديد)"></textarea>
+        <textarea id="doctorInput" rows="2" placeholder="اكتب سؤالك للمريض هنا... (Enter للإرسال)"></textarea>
         <button id="sendBtn" class="send-btn">إرسال</button>
       </div>
 
       <div class="session-bar">
         <button id="evalBtn" class="eval-btn" type="button">🎓 إنهاء الجلسة وتقييم الأداء</button>
-        <span class="session-hint">أو اكتب <code>EVALUATE_HISTORY</code> في صندوق السؤال لإصدار تقرير المدرّب السريري (تقرير بالعربية مع إبقاء المصطلحات الطبية بالإنجليزية).</span>
-      </div>
-
-      <div class="eval-banner" id="evalBanner" hidden>
-        <span>🎓</span>
-        <span>وضع المدرّب: خرج المريض من الدور. المريض لا يجيب الآن — اسأل المدرّب عن أي نقطة في التقرير أو اطلب توضيحاً أو اطلب فحصاً لشرح دلالته (أجوبة المدرّب بالعربية مع المصطلحات بالإنجليزية).</span>
       </div>
 
       <div class="panel-box">
-        <div class="panel-title">الفحص السريري — اضغط للفحص (سيعطيك الراوي السريري النتائج الموضوعية). العلامات الحيوية تُقاس بزرّها المستقل، ولا تُذكر إلا إذا طلبتها:</div>
+        <div class="panel-title">الفحص السريري — اضغط للفحص (النتائج ستظهر مباشرة):</div>
         <div class="exam-grid" id="examGrid"></div>
       </div>
 
       <div class="panel-box">
-        <div class="panel-title">أسئلة جاهزة — اضغط لإدراجها في الصندوق (عدّلها كما تشاء):</div>
+        <div class="panel-title">أسئلة جاهزة — اضغط لإدراجها:</div>
         <div class="chips-body" id="chipsBody"></div>
       </div>
     </section>
@@ -77,1379 +135,328 @@
     <aside class="sheet-col">
       <div class="sheet-card">
         <h2>ورقة المريض (اكتب ملاحظاتك)</h2>
-
-        <label for="sheet_vitals">العلامات الحيوية (Vital Signs) — إلزامية</label>
-        <textarea id="sheet_vitals" rows="2"></textarea>
-
-        <label for="sheet_cc">الشكوى الرئيسية</label>
-        <textarea id="sheet_cc" rows="2"></textarea>
-
-        <label for="sheet_hpi">تاريخ المرض الحالي (HPI / OLDCARTS)</label>
-        <textarea id="sheet_hpi" rows="6"></textarea>
-
-        <label for="sheet_pmh">الأمراض السابقة والربو (PMH)</label>
-        <textarea id="sheet_pmh" rows="3"></textarea>
-
-        <label for="sheet_psh">العمليات ونقل الدم (PSH)</label>
-        <textarea id="sheet_psh" rows="2"></textarea>
-
-        <label for="sheet_fh">التاريخ العائلي (FH)</label>
-        <textarea id="sheet_fh" rows="2"></textarea>
-
-        <label for="sheet_meds">الأدوية والحساسية (DH)</label>
-        <textarea id="sheet_meds" rows="3"></textarea>
-
-        <label for="sheet_sh">التاريخ الاجتماعي والسلوكي (SH)</label>
-        <textarea id="sheet_sh" rows="3"></textarea>
-
-        <div id="obgynBlock" hidden>
-          <label for="sheet_obgyn">التاريخ النسائي والتوليدي (OB/GYN)</label>
-          <textarea id="sheet_obgyn" rows="3"></textarea>
-        </div>
-
-        <label for="sheet_dx">التشخيص المبدئي</label>
-        <textarea id="sheet_dx" rows="2"></textarea>
-
-        <details class="exam-sheet" id="examSheet">
-          <summary>الفحص السريري (Examination)</summary>
-          <label for="sheet_exam_head">الرأس والعنق</label>
-          <textarea id="sheet_exam_head" rows="3"></textarea>
-          <label for="sheet_exam_abd">البطن</label>
-          <textarea id="sheet_exam_abd" rows="3"></textarea>
-          <label for="sheet_exam_upper">الأطراف العلوية</label>
-          <textarea id="sheet_exam_upper" rows="3"></textarea>
-          <label for="sheet_exam_lower">الأطراف السفلية</label>
-          <textarea id="sheet_exam_lower" rows="3"></textarea>
-          <label for="sheet_exam_other">فحوص خاصة أخرى (مستقيم، عين، تحاليل...)</label>
-          <textarea id="sheet_exam_other" rows="3"></textarea>
-        </details>
-
+        <label>العلامات الحيوية (Vital Signs)</label><textarea id="sheet_vitals" rows="2"></textarea>
+        <label>الشكوى الرئيسية</label><textarea id="sheet_cc" rows="2"></textarea>
+        <label>تاريخ المرض الحالي (HPI / OLDCARTS)</label><textarea id="sheet_hpi" rows="4"></textarea>
+        <label>الأمراض السابقة والربو (PMH)</label><textarea id="sheet_pmh" rows="2"></textarea>
+        <label>العمليات ونقل الدم (PSH)</label><textarea id="sheet_psh" rows="2"></textarea>
+        <label>التاريخ العائلي (FH)</label><textarea id="sheet_fh" rows="2"></textarea>
+        <label>الأدوية والحساسية (DH)</label><textarea id="sheet_meds" rows="2"></textarea>
+        <label>التاريخ الاجتماعي والسلوكي (SH)</label><textarea id="sheet_sh" rows="2"></textarea>
+        <div id="obgynBlock" hidden><label>التاريخ النسائي (OB/GYN)</label><textarea id="sheet_obgyn" rows="2"></textarea></div>
         <button id="clearSheetBtn" class="ghost-btn wide">تفريغ الورقة</button>
       </div>
-
       <div class="answer-panel" id="answerPanel" hidden></div>
     </aside>
   </main>
 
   <footer class="site-footer">
-    <a class="ig-link" href="https://www.instagram.com/dr.mhn.d?igsh=bnh6bGIwOGNxbTl0" target="_blank" rel="noopener noreferrer">
-      <svg class="ig-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <rect x="2.6" y="2.6" width="18.8" height="18.8" rx="5.4" fill="none" stroke="currentColor" stroke-width="1.8"/>
-        <circle cx="12" cy="12" r="4.35" fill="none" stroke="currentColor" stroke-width="1.8"/>
-        <circle cx="17.35" cy="6.65" r="1.25" fill="currentColor"/>
-      </svg>
-      <span class="ig-user">Dr.Mhn.D</span>
-    </a>
+    <a class="ig-link" href="https://www.instagram.com/dr.mhn.d" target="_blank">Dr.Mhn.D | الزيتونة الطبية</a>
   </footer>
 </div>
 
-<script src="src/cases/ortho-trauma.js"></script>
-<script src="src/cases/general-surgery.js"></script>
-<script src="src/cases/cardio-pulmo.js"></script>
-<script src="src/cases/gastro-hepato.js"></script>
-<script src="src/cases/nephro-urology.js"></script>
-<script src="src/cases/neurology.js"></script>
-<script src="src/cases/endo-rheum.js"></script>
-<script src="src/cases/obgyn.js"></script>
-<script src="src/cases/infectious-heme.js"></script>
-<script src="src/cases/ent-ophtho-emerg.js"></script>
-
 <script>
-const LEGACY_CASES = [
+// --- قوائم الأسماء الثابتة (لعدم الاعتماد على واجهة خارجية) ---
+const MALE_NAMES = ["أحمد", "محمود", "خالد", "عبدالله", "محمد", "فيصل", "يوسف", "عمر"];
+const FEMALE_NAMES = ["فاطمة", "مريم", "نورة", "سارة", "هند", "ريم", "ليلى", "عائشة"];
+
+// --- قاعدة بيانات الحالات ---
+// أضفت هنا الحالات الأصلية + 3 حالات جديدة (جراحة عظام، جراحة عامة، أشعة تداخلية).
+// يمكنك نسخ هذا القالب لإضافة 50 حالة إضافية بكل سهولة.
+const CASES = [
   {
-    sex: "male", ageMin: 18, ageMax: 28,
+    cat: "جراحة العظام", sex: "male", ageMin: 45, ageMax: 60,
+    diag: "خشونة مفصل الركبة المتقدمة (Severe Knee Osteoarthritis)",
+    cc: "ركبتي اليمين توجعني وما أقدر أمشي مسافات",
+    story: {
+      hpi: "الوجع صار له شهور ويزيد مع الأيام، خصوصاً لما أطلع السلم أو أمشي مسافة. أحس بتصلب في المفصل الصبح بس يفك بعد ربع ساعة. أحياناً أسمع صوت طقطقة لما أثنيها.",
+      pmh: "عندي ضغط دم مرتفع وآخذ علاجه. وزني زايد شوي.",
+      psh: "ما سويت أي عملية جراحية من قبل.",
+      fh: "أمي كان عندها نفس المشكلة في ركبها.",
+      meds: "آخذ حبوب الضغط (أملوديبين) وحبوب بروفين للوجع عند اللزوم. ما عندي حساسية.",
+      sh: "أشتغل مدرس، وأوقف كثير. ما أدخن.",
+      extra: "ما طحت عليها ولا انصابت، الوجع إجى تدريجي."
+    },
+    exam: {
+      vitals: { bp: "140/90", hr: "78", rr: "16", temp: "36.8" },
+      head: "طبيعي، لا يوجد اصفرار ولا شحوب.",
+      abd: "طبيعي، لا يوجد إيلام.",
+      upper: "طبيعي، النبض متساوي.",
+      lower: "تورم عظمي خفيف في الركبة اليمنى، طقطقة محسوسة (Crepitus) عند ثني الركبة، تحديد في مدى الحركة بآخر الدرجات، ألم عند الضغط على خط المفصل. لا يوجد حرارة أو احمرار في الركبة.",
+      extra: [
+        { label: "صورة أشعة سينية للركبة", q: "اطلب أشعة X-Ray", find: "ضيق شديد في المسافة المفصلية، وتكون نتوءات عظمية (Osteophytes) - يوافق خشونة الركبة المتقدمة." }
+      ]
+    }
+  },
+  {
+    cat: "الجراحة العامة", sex: "female", ageMin: 30, ageMax: 45,
+    diag: "فتق سري مختنق (Strangulated Umbilical Hernia)",
+    cc: "عندي انتفاخ في السرة يوجعني جداً وما يرجع",
+    story: {
+      hpi: "عندي انتفاخ في السرة من بعد ولادتي الأخيرة، بس كان عادي ويرجع لما أنام. من 6 ساعات كبر وصار قاسي ووجعه فظيع وما يقبل يرجع. ومعي غثيان واستفرغت مرة وحدة.",
+      pmh: "ما عندي أمراض مزمنة، لا ضغط ولا سكر.",
+      psh: "عملية ولادة قيصرية قبل 3 سنين.",
+      fh: "لا يوجد تاريخ لأمراض مشابهة.",
+      meds: "ما آخذ أي علاج. وما عندي حساسية لأي دواء.",
+      sh: "ربة منزل، لا أدخن.",
+      extra: "البراز كان طبيعي أمس، بس من وقت الوجع ما طلع غازات."
+    },
+    obgyn: "عندي 3 أطفال، آخر ولادة كانت قيصرية. دورتي منتظمة.",
+    exam: {
+      vitals: { bp: "110/70", hr: "105", rr: "20", temp: "37.6" },
+      head: "المريضة تتألم بشدة، الأغشية المخاطية جافة قليلاً.",
+      abd: "كتلة قاسية ومؤلمة جداً عند اللمس في منطقة السرة بقطر 5 سم، الجلد فوقها محمر قليلاً. لا يمكن إرجاعها (Irreducible). لا يوجد أصوات أمعاء مسموعة فوق الكتلة.",
+      upper: "طبيعي.", lower: "طبيعي.",
+      extra: [
+        { label: "أشعة مقطعية أو سونار", q: "أريد سونار للبطن", find: "فتق سري يحتوي على عروة معوية محتبسة مع وذمة في الجدار، يوافق فتق مختنق." }
+      ]
+    }
+  },
+  {
+    cat: "جراحة الأوعية الدموية", sex: "male", ageMin: 55, ageMax: 70,
+    diag: "نقص تروية حاد في القدم (Acute Limb Ischemia)",
+    cc: "رجلي اليمين بردت فجأة وصار فيها وجع شديد",
+    story: {
+      hpi: "كنت جالس أقرأ، فجأة ضربني وجع قوي جداً في ساقي اليمنى من تحت الركبة للقدم. رجلي صارت بيضاء وباردة جداً مثل الثلج. وأحس بتنميل في الأصابع.",
+      pmh: "عندي سكري، وعندي مشكلة في دقات القلب (رفرفة أذينية) قالوا لي عنها من زمان.",
+      psh: "ما سويت عمليات.",
+      fh: "والدي توفي بجلطة قلبية.",
+      meds: "كنت آخذ حبوب سيولة (ماريفان) بس وقفتها من شهر لأني نسيت أجدد الوصفة. لا حساسية.",
+      sh: "متقاعد، وأدخن بكيت باليوم.",
+      extra: "ما انخبطت عليها ولا سويت مجهود. الوجع مستمر ما يوقف."
+    },
+    exam: {
+      vitals: { bp: "150/95", hr: "115", rr: "18", temp: "36.5", extra: "نبض غير منتظم (Irregularly irregular)" },
+      head: "طبيعي، لا شحوب في الوجه.",
+      abd: "طبيعي، لا يوجد كتلة نابضة.",
+      upper: "النبض غير منتظم في الذراعين.",
+      lower: "الساق اليمنى باردة جداً وشاحبة من منتصف الساق للأسفل. غياب كامل لنبض الشريان المأبضي (Popliteal) وشرايين القدم (Dorsalis Pedis & PT). فقدان الإحساس في القدم وضعف في تحريك الأصابع. الساق اليسرى دافئة ونبضها طبيعي.",
+      extra: [
+        { label: "أشعة دوبلر", q: "أريد عمل أشعة دوبلر للشرايين", find: "انسداد كامل في الشريان الفخذي السطحي (SFA) الأيمن، مع غياب التدفق الدموي للقدم." }
+      ]
+    }
+  },
+  {
+    cat: "الجراحة العامة", sex: "male", ageMin: 18, ageMax: 28,
     diag: "التهاب الزائدة الدودية الحاد (Acute Appendicitis)",
     cc: "بطني يوجعني وما قادر أرتاح",
     story: {
-      hpi: "بدأ الوجع أمس قرب السرة، كان خفيف ويجي ويروح. اليوم انتقل لأسفل الجهة اليمنى وصار ثقيل وقوي. أحس بغثيان وما لي نفس آكل، وقست الحرارة قبل ساعة وكانت 38. الوجع يزيد لما أتحرك أو أكح أو ألمس بطني، وأرتاح شوي لما أضطجع وأثني ركبتي. ما جاني إقياء ولا إسهال، والتبول طبيعي.",
-      pmh: "لا أعاني من أي مرض مزمن، ولم أُدخل المستشفى من قبل. ولا عندي ربو.",
-      psh: "لا يوجد أي عملية سابقة، ولم أحتاج نقل دم في حياتي.",
+      hpi: "بدأ الوجع أمس قرب السرة، كان خفيف ويجي ويروح. اليوم انتقل لأسفل الجهة اليمنى وصار ثقيل وقوي. أحس بغثيان وما لي نفس آكل. الوجع يزيد لما أتحرك أو أكح.",
+      pmh: "لا أعاني من أي مرض مزمن.",
+      psh: "لا يوجد أي عملية سابقة.",
       fh: "لا يوجد تاريخ عائلي لأمراض مشابهة.",
-      meds: "أخذت حبتين باراسيتامول بالبيت وما خفف الوجع. لا حساسية من أي دواء.",
-      sh: "طالب جامعي، أسكن مع أهلي في سكن الطلبة خلال الأسبوع، لا أدخن، أشرب شاي وقهوة، وألعب كرة القدم مرة بالأسبوع.",
-      extra: "آخر مرة تبرّزت كانت أمس وكان طبيعي. لا تاريخ سفر، ولا مشاكل في التبول، ولا إصابة أو ضربة على البطن. ما أكلت شي غريب."
+      meds: "أخذت حبتين مسكن بالبيت وما خفف الوجع. لا حساسية.",
+      sh: "طالب جامعي، لا أدخن.",
+      extra: "التبول طبيعي ولا يوجد إسهال."
     },
     exam: {
       vitals: { bp: "118/75", hr: "92", rr: "18", temp: "38.0" },
-      head: "المريض واعٍ ومتجاوب، يبدو متوعكاً. لا شحوب شديد، الصلبة بيضاء بلا اصفرار، اللسان جاف قليلاً، لا تضخم في العقد اللمفية العنقية، لا انتفاخ في الوريد الوداجي (JVD).",
-      abd: "البطن مسطح ولا يتحرك جيداً مع التنفس. حسّاسية شديدة عند اللمس في الربع السفلي الأيمن عند نقطة ماكبرني، مع دفاع عضلي وارتداد مؤلم (rebound tenderness). أصوات الأمعاء خفيفة. علامة روفسنغ إيجابية. لا تضخم كبدي أو طحالي، لا كتلة محسوسة، لا نفخة.",
-      upper: "النبض الكعبري منتظم ومتساوٍ في الطرفين، الامتلاء الشعري أقل من ثانيتين، لا وذمة، لا شحوب محيطي، القوة العضلية والمنعكسات طبيعية.",
-      lower: "نبضات الفخذ والظنبوب الخلفي وظهر القدم محسوسة ومتساوية في الطرفين، لا وذمة، لا ألم في الربلة ولا علامة هومانز، حركة المفاصل كاملة، لا ضعف حركي أو حسي.",
-      extra: [
-        { label: "فحص المستقيم (DRE)", q: "أريد فحص المستقيم", find: "إيلام واضح في الجدار الأيمن للمستقيم مع حساسية، لا كتلة، ولا دم على القفاز — يوافق تهيّجاً في الحوض الأيمن." },
-        { label: "تحليل الدم والتصوير بالموجات فوق الصوتية", q: "اطلب تحليل دم وتصويراً بالموجات فوق الصوتية للبطن", find: "كريات بيضاء 14.2 مع تحول لليسار، CRP 55، والموجات تُظهر زائدة دودية قطرها 9 ملم غير قابلة للضغط مع سائل حولها — يوافق التهاب الزائدة الحاد." }
-      ]
-    }
-  },
-  {
-    sex: "male", ageMin: 52, ageMax: 66,
-    diag: "احتشاء عضلة القلب الحاد (Acute Myocardial Infarction)",
-    cc: "أحس بثقل ووجع شديد في صدري",
-    story: {
-      hpi: "الوجع بدأ وأنا جالس أتفرج على التلفاز بعد العشاء، صار له حوالي ساعة. أحس بثقل كبير وضغط وحرقة في منتصف صدري، ويمتد لكتفي الأيسر وفكي. أتعرق بشكل غزير وأحس بضيق نفس وغثيان. ما خف الوجع لا بالجلوس ولا بالاستلقاء، وأحسه ثابت أو يزيد. زوجتي هي اللي جابتني.",
-      pmh: "عندي ضغط مرتفع وسكري من حوالي عشر سنين، وآخذ حبوبهم بانتظام. ما عندي ربو. ما سبق أن جاءني وجع صدر مثل هذا.",
-      psh: "لا عمليات سابقة، ولم أستقبل دم من قبل.",
-      fh: "والدي توفي بجلطة في القلب وهو في الخمسين، وأخي عنده ضغط.",
-      meds: "آخذ حبوب الضغط وحبوب السكر يومياً بانتظام. عندي حساسية من البنسلين (طلع لي طفح وحبوب بالجسم مرة).",
-      sh: "متزوج وعندي أولاد، موظف مكتبي ودوامي فيه ضغط وتوتر. أدخن علبة سجائر يومياً من 30 سنة، وما أمارس أي رياضة، وأكلي فيه دسم كثير.",
-      extra: "لا تاريخ عمليات قلب سابقة، ولا جلطات سابقة. ما أخذت أي دواء اليوم غير حبوبي المعتادة، وما تعرضت لأي إصابة أو مجهود شاق قبل الوجع."
-    },
-    exam: {
-      vitals: { bp: "148/92", hr: "96", rr: "20", temp: "36.9" },
-      head: "المريض واعٍ لكنه قلق ومتعرق. الجلد بارد ورطب، الوريد الوداجي غير منتفخ (لا JVD). الصلبة بلا اصفرار ولا شحوب شديد. لا تضخم في العقد اللمفية العنقية.",
-      abd: "البطن لين وغير مؤلم عند اللمس، أصوات الأمعاء طبيعية، لا ألم فوق المعدة، لا تضخم كبدي أو طحالي، لا كتلة أبهري نابضة.",
-      upper: "النبض الكعبري غير منتظم الإيقاع قليلاً ومتساوٍ في الطرفين، تعرق ملحوظ في الكفين، لا وذمة، الامتلاء الشعري طبيعي.",
-      lower: "نبضات الشرايين الفخذية والظنبوبية وظهر القدم محسوسة ومتساوية، لا وذمة في الساقين، لا ألم في الربلة ولا علامة هومانز، حركة طبيعية بلا ضعف.",
-      extra: [
-        { label: "تخطيط القلب (ECG)", q: "اطلب تخطيط القلب", find: "ارتفاع مقطع ST في المساري الأمامية V2 إلى V4 مع انعكاس مقابل في المساري السفلية — يوافق احتشاء أمامي حاد على الجدار الأمامي." },
-        { label: "التروبونين وصورة الصدر", q: "اطلب تحليل القلب (التروبونين) وصورة للصدر", find: "التروبونين I مرتفع بشكل كبير والـCK-MB مرتفعة، وصورة الصدر تُظهر توسعاً بسيطاً في ظل القلب دون انصباب — يوافق احتشاء عضلة القلب الحاد." }
-      ]
-    }
-  },
-  {
-    sex: "female", ageMin: 40, ageMax: 58,
-    diag: "التهاب المرارة الحاد مع حصوات (Acute Calculous Cholecystitis)",
-    cc: "وجع شديد في أعلى بطني من الجهة اليمنى",
-    story: {
-      hpi: "الوجع بدأ البارحة بعد العشاء، وكنا متعشين أكل دسم. البداية حسيتها مثل ثقل تحت ضلوعي اليمين، وبعد ساعتين صار وجع قوي وثابت يمتد لكتفي الأيمن وظهري. غثيان واستفرغت مرتين، وأحس بحرارة وقشعريرة خفيفة. الوجع يزيد لما آخذ نفس عميق أو أتحرك أو ألمس مكانه.",
-      pmh: "قبل سنتين عملت صورة وأخبروني بوجود حصوات في المرارة، لكنها ما كانت توجعني ولم آخذ أي علاج. ما عندي ربو ولا ضغط ولا سكري.",
-      psh: "أربع ولادات طبيعية، ولا عمليات أخرى. احتاجوا يعطوني دم مرة بعد ولادتي الأولى قبل 12 سنة، وما صار أي رد فعل.",
-      fh: "أمي استأصلت المرارة بسبب الحصوات، وأختي عندها حصوات أيضاً.",
-      meds: "ما آخذ أي دواء بانتظام. أخذت حبة مسكن أمس ولم تفد. لا حساسية من الأدوية.",
-      sh: "ربة منزل، لا أدخن، ولا أشرب كحول. زاد وزني حوالي 8 كيلو في السنتين الأخيرتين، وأكلي فيه دسم.",
-      extra: "لون البراز والبول طبيعي، ولا يوجد اصفرار في العين. آخر مرة استفرغت اليوم الصباح. ما عندي إسهال ولا إمساك، ولا حمى سابقة مع الوجع."
-    },
-    obgyn: "حملت خمس مرات، وأربع ولادات طبيعية، وعندي إجهاض واحد مبكر قبل 9 سنوات، وعندي أربعة أطفال أحياء. آخر دورة شهرية كانت قبل أسبوعين وكانت طبيعية، ودورتي منتظمة كل 28 يوم. ما زلت آخذ الدورة، وما أستخدم أي وسيلة منع حمل، وما عندي مشاكل نسائية ولا عمليات في الرحم.",
-    exam: {
-      vitals: { bp: "132/80", hr: "92", rr: "20", temp: "38.2" },
-      head: "المريضة واعية ومتجاوبة، الجلد دافئ، الصلبة بيضاء بلا اصفرار واضح. لا تضخم في العقد اللمفية العنقية، لا انتفاخ في الوريد الوداجي. ملاحظة: لا شحوب ولا يرقان.",
-      abd: "البطن ممتلئ قليلاً، حسّاسية شديدة عند اللمس في الربع العلوي الأيمن مع علامة مورفي إيجابية (توقّف التنفس الشهيقي عند الضغط تحت القفص الصدري الأيمن)، دون دفاع أو ارتداد معمّم. أصوات الأمعاء طبيعية. لا تضخم كبدي أو طحالي واضح، لا كتلة محسوسة، لا يرقان جلدي، لا حسّاسية في الربع السفلي.",
-      upper: "النبض منتظم، لا وذمة، لا شحوب محيطي، الامتلاء الشعري طبيعي، القوة والمنعكسات طبيعية.",
-      lower: "لا وذمة في الساقين، نبضات محسوسة ومتساوية، لا ألم في الربلة ولا علامة هومانز، حركة كاملة.",
-      extra: [
-        { label: "تصوير المرارة بالسونار وعلامة مورفي", q: "افحص علامة مورفي واطلب تصويراً بالسونار للمرارة", find: "علامة مورفي إيجابية، والسونار يُظهر حصوات في المرارة وجداراً سميكاً أكثر من 4 ملم مع سائل حولها — يوافق التهاب مرارة حاداً بحصوات." },
-        { label: "تحليل الدم وإنزيمات الكبد", q: "اطلب تحليل دم وإنزيمات الكبد", find: "كريات بيضاء 16، CRP 96، وإنزيمات الكبد (ALP و GGT) مرتفعة قليلاً دون ارتفاع كبير في البيليروبين — يوافق التهاب مرارة حاداً غير مضاعف." }
-      ]
-    }
-  },
-  {
-    sex: "female", ageMin: 24, ageMax: 34,
-    diag: "حمل خارج الرحم الممزق (Ruptured Ectopic Pregnancy)",
-    cc: "وجع في أسفل بطني وينزل مني دم خفيف",
-    story: {
-      hpi: "الوجع بدأ البارحة أسفل بطني كتقلّص خفيف، وسرت أشعر به أكثر على الجهة اليمنى. اليوم صار الوجع شديد وثابت ولا يخف. نزل عليّ دم خفيف بني مائل للوردي، شكله مختلف عن الدورة. أحس بدوخة وثقل، وقبل شوي حسيت أني بدي أغمى عليّ لما وقفت، وأحس بوجع غريب عند كتفي. دورتي متأخرة أسبوعين عن موعدها.",
-      pmh: "عندي ربو خفيف من وأنا صغيرة، وأستخدم بخاخ عند الحاجة، وما جاني هجوم قوي من سنوات. غير ذلك صحتي جيدة.",
-      psh: "عملية قيصرية قبل سنتين بولادة أول طفل، وما احتجت دم وقتها.",
-      fh: "لا يوجد تاريخ عائلي لأمراض مشابهة.",
-      meds: "ما آخذ أي دواء بانتظام غير البخاخ. لا حساسية من الأدوية.",
-      sh: "ربة منزل، متزوجة، أسكن مع أهلي، لا أدخن، ما كنا نمنع الحمل ولا نحاوله، ما عندي أي وسيلة منع.",
-      extra: "لا حرارة، ولا إسهال، والتبول طبيعي وغير مؤلم. عندي دوخة قوية لما أوقف، وأحس بثقل غريب عند كتفي الأيمن. لا آخذ أي مسكنات، ولا أعرف أني حامل ولا عملت تحليل حمل."
-    },
-    obgyn: "حملت مرتين: ولادة واحدة قيصرية قبل سنتين وعندي طفل واحد حي، ولا يوجد إجهاض. دورتي كانت منتظمة كل 28-30 يوم، وآخر دورة كانت قبل حوالي ستة أسابيع، يعني متأخرة عن موعدها أسبوعين. ما أستخدم أي وسيلة منع حمل، وما عملت تحليل حمل ولا صورة.",
-    exam: {
-      vitals: { bp: "92/60", hr: "112", rr: "22", temp: "37.0", extra: "نبض سريع وضعيف الامتلاء مع انخفاض ضغط الدم — يوافق علامات صدمة نزفية (hypovolemic shock)" },
-      head: "شحوب واضح في الملتحمة والجلد، الجلد بارد ورطب، الصلبة بيضاء بلا اصفرار، لا تضخم في العقد اللمفية، الوريد الوداجي غير منتفخ وقد يكون منخفضاً (نقص حجم). المريضة تبدو متوعكة وقلقة.",
-      abd: "حسّاسية شديدة عند اللمس في أسفل البطن خصوصاً الجهة اليمنى، مع دفاع عضلي وارتداد مؤلم (علامة تهيّج بريتوني). أصوات الأمعاء خفيفة. احتمال كتلة في الملحقات اليمنى. علامة كولن (ازرقاق حول السرة) غير واضحة. فحص الحوض عند الطلب: إيلام حركي شديد عند تحريك عنق الرحم، وربما تمدد بسيط في عنق الرحم مع دم بني في المهبل.",
-      upper: "النبض ضعيف الامتلاء، الكفان باردان ورطبان، الامتلاء الشعري متأخر (حوالي 3 ثوان)، لا وذمة.",
-      lower: "لا وذمة في الساقين، نبضات ظهر القدم محسوسة لكن ضعيفة، لا ألم في الربلة ولا علامة هومانز، قوة عضلية طبيعية.",
-      extra: [
-        { label: "تحليل الحمل بالدم ومستوى الهرمون", q: "اطلب تحليل الحمل بالدم وقياس الهرمون", find: "تحليل الحمل إيجابي ومستوى الهرمون 2450 وحدة دون كيس داخل الرحم — يوافق حملاً خارج الرحم." },
-        { label: "تصوير الحوض وصورة الدم", q: "اطلب تصويراً للحوض وصورة دم كاملة", find: "سائل حرّ في الحوض مع كتلة في الملقات اليمنى، هيموغلوبين 8.6 وانخفاض مناسب في العلامات، يودي إلى احتمال حمل خارج الرحم ممزق مع نزف داخل البطن." }
-      ]
-    }
-  },
-  {
-    sex: "male", ageMin: 18, ageMax: 24,
-    diag: "التهاب السحايا الجرثومي (Bacterial Meningitis)",
-    cc: "صداع شديد وحرارة عالية ما تنزل",
-    story: {
-      hpi: "من الصبح عندي صداع قوي جداً في كل رأسي، وأقوى صداع جاني بحياتي. عندي حرارة قستها وكانت 39، ورجفة. رقبتي صارت متيبسة ما أقدر أطأطئ رأسي، وأي نور أو صوت يزيد الصداع والوجع. استفرغت مرتين، وحسيت مرة أرتبك وما عرفت وين أنا. زميلي بالسكن هو اللي جابني.",
-      pmh: "كنت مصاب بزكام وحرارة قبل أسبوع وخفّ لوحده. ما عندي أمراض مزمنة ولا ربو.",
-      psh: "لا عمليات سابقة، وما استقبلت دم.",
-      fh: "لا تاريخ عائلي لأمراض مشابهة.",
-      meds: "أخذت باراسيتامول ولم تنزل الحرارة. ما آخذ أي مضاد حيوي. لا حساسية.",
-      sh: "طالب جامعي، أسكن سكن طلابي مع ثلاث زملاء في غرفة صغيرة، نشترك بالأكواب والأدوات. أدخن مناسبات، ما أشرب كحول.",
-      extra: "طلع لي أمس نقط صغيرة حمراء على رجلي ما كانت موجودة قبله. لا إسهال، ولا وجع بالبطن، والتبول طبيعي. ما عندي إصابات أو سقوط، وما أخذت أي لقاح جديد."
-    },
-    exam: {
-      vitals: { bp: "106/66", hr: "118", rr: "22", temp: "39.1" },
-      head: "المريض واعٍ لكنه متوعك وناعس، ويتأذى من الضوء. تصلّب الرقبة إيجابي ولا يستطيع لمس صدره بذقنه، وعلامتا كيرنيغ وبرودزينسكي إيجابيتان. لا تضخم في العقد اللمفية، لا JVD، الصلبة بيضاء. لا علامات التهاب جيوب أو أذن ظاهرة.",
-      abd: "البطن لين وغير مؤلم عند اللمس، أصوات الأمعاء طبيعية، لا تضخم كبدي أو طحالي، لا علامة تهيّج بريتوني.",
-      upper: "لا وذمة، الامتلاء الشعري طبيعي، القوة العضلية والمنعكسات طبيعية، لا تصلب رقبي في الطرفين.",
-      lower: "طفح نقطي أحمر (petechial rash) على الساق والفخذ الأيمن لا يختفي بالضغط. لا وذمة، نبضات طبيعية ومتساوية، لا ضعف حركي، لا علامة هومانز.",
-      extra: [
-        { label: "البزل القطني (Lumbar puncture)", q: "أريد إجراء البزل القطني", find: "السائل الدماغي شبه عكر بضغط مرتفع، خلايا 1800 مع غلبة العدلات، بروتين مرتفع جداً، سكر منخفض، وصبغة جرام تُظهر عقديات رئوية ثنائية الطيف — يوافق التهاب سحايا جرثومي." },
-        { label: "مزارع الدم وتقييم الاستجابة", q: "اطلب مزارع الدم وتحاليل الالتهاب", find: "مزرعة الدم تنمو عقديات رئوية، مع تحسن جزئي وحرارة مستمرة رغم السوائل والمضاد الحيوي الوريدي الأول — يستدعي متابعة عاجلة." }
-      ]
-    }
-  },
-  {
-    sex: "female", ageMin: 18, ageMax: 26,
-    diag: "الحماض الكيتوني السكري (Diabetic Ketoacidosis)",
-    cc: "تعب شديد وغثيان وترجيع مستمر",
-    story: {
-      hpi: "من ثلاثة أيام عندي حرارة وألم في الحلق مثل الانفلونزا، وما قادرة آكل. من البارحة صرت أرجع كل شي حتى الماء، وحس بوجع في بطني وحموضة. أشرب ماء كثير وأدخل الحمام كثير، وتعبت كثير وأحس نفسي سريع وأني محتاجة هواء. نقص وزني في هالفترة.",
-      pmh: "عندي السكري من النوع الأول من وأنا صغيرة، وآخذ إبر أنسولين. ما عندي ربو ولا أمراض ثانية. قبل يومين لما صرت أرجع ما قدرت آكل ووقفت الإنسولين.",
-      psh: "لا عمليات سابقة، ولا نقل دم.",
-      fh: "أخي الأصغر عنده نفس السكري من النوع الأول.",
-      meds: "إبر أنسولين صباحاً ومساءً، ما آخذ غيرها. لا حساسية.",
-      sh: "طالبة جامعية، أسكن مع أهلي، لا أدخن، وزني ناقص شوي من الأصل.",
-      extra: "ما عندي إسهال، ولا وجع عند التبول، وما آكل أي شي من أمس غير شفطات ماء. ما أخذت أي دواء غير الأنسولين."
-    },
-    obgyn: "غير متزوجة، ولم يحدث لي حمل ولا إجهاض. آخر دورة شهرية كانت قبل 10 أيام وكانت طبيعية، ودورتي منتظمة كل 28 يوم. ما أستخدم أي حبوب أو وسيلة منع حمل، وما عندي أي مشاكل نسائية.",
-    exam: {
-      vitals: { bp: "96/60", hr: "120", rr: "28", temp: "36.9", extra: "جفاف واضح مع تنفّس عميق وسريع (نمط Kussmaul)" },
-      head: "المريضة تبدو متعبة ومجففة، الأغشية المخاطية واللسان جافّان، العينان غائرتان قليلاً، تنفّس سريع وعميق (Kussmaul)، ورائحة الفم حامضية/فاكهية. لا تضخم في العقد اللمفية، لا JVD، الصلبة بيضاء.",
-      abd: "البطن لين مع حسّاسية منتشرة خفيفة عند اللمس، لا دفاع ولا ارتداد، أصوات الأمعاء طبيعية لكنها خفيفة، لا تضخم أعضاء ولا كتلة.",
-      upper: "الكفان جافتان، الامتلاء الشعري متأخر (3-4 ثوان)، مطاوعة الجلد منخفضة، لا وذمة.",
-      lower: "لا وذمة في الساقين، نبضات محسوسة، لا ألم في الربلة ولا علامة هومانز، لا ضعف حركي أو حسي، لا تقرحات في القدمين.",
-      extra: [
-        { label: "تحليل السكر والغازات والكيتونات", q: "اطلب تحليل السكر والغازات والكيتونات", find: "سكر 526، الأس الهيدروجيني 7.12، بيكربونات 8، فجوة أنيونية مرتفعة 26، كيتونات الدم والبول إيجابية، وبوتاسيوم 5.4 — يوافق حماضاً كيتونياً سكرياً." },
-        { label: "تقييم الجفاف والكهارل", q: "قيّم درجة الجفاف وأجروا تحليل الكهارل والكلى", find: "جفاف واضح مع تنفس عميق سريع، صوديوم 130، كرياتينين 1.4 ويوريا مرتفعة — يوافق حماضاً كيتونياً سكرياً مع جفاف متوسط إلى شديد." }
-      ]
-    }
-  },
-  {
-    sex: "male", ageMin: 58, ageMax: 72,
-    diag: "جلطة دماغية حادة (Acute Ischemic Stroke)",
-    cc: "إيدي اليمنى صارت ثقيلة وكلامي تلخبط",
-    story: {
-      hpi: "قبل ساعة تقريباً وأنا أفطر، صارت يدي اليمنى ثقيلة وما أقدر أرفعها زين، ورجلي اليمنى حسيتها ضعيفة، وفمي صار مايل وأختي لاحظت. لساني ثقيل وأحياناً أعرف شنو أريد أقول لكن الكلام ما يطلع واضح. ما عندي وجع ولا صداع، وما غبت عن الوعي.",
-      pmh: "عندي ضغط مرتفع من سنوات، وعندي كوليسترول. قبل فترة قال لي الدكتور إن دقات قلبي غير منتظمة. ما عندي ربو. ما سبق أن جاءتني حالة مثل هذه.",
-      psh: "استئصال الزائدة قبل 30 سنة، وما احتجت نقل دم.",
-      fh: "والدي جاته جلطة دماغية، وأخي عنده ضغط.",
-      meds: "آخذ حبوب الضغط وأحياناً أنسى أخذها، وأخذ حبة للكوليسترول. قبل سنة صرفوا لي حبوب تمييع دم وأنا وقفتها من كم شهر. لا حساسية من الأدوية.",
-      sh: "متقاعد، كنت أعمل سائق. أدخن علبة يومياً من 35 سنة، وأكلي فيه ملح ودسم، وما أمارس رياضة.",
-      extra: "الكلام يطلع بصعوبة ومتقطع، لكني أفهم كل شي وإيش تسألني عنه. ما عندي وجع بالصدر، وما تعرضت لضربة على الرأس، وما أخذت دواء زائد."
-    },
-    exam: {
-      vitals: { bp: "168/94", hr: "88", rr: "18", temp: "36.9", extra: "النبض غير منتظم الإيقاع (irregularly irregular — رجفان أذيني)" },
-      head: "الوعي طبيعي والمريض متجاوب. زاوية الفم مايلة قليلاً، اللسان منحرف، الكلام متلعثم (dysarthria) مع سلامة فهم اللغة. لا تصلب رقبي، لا JVD، لا تضخم في العقد اللمفية، لا نفخة واضحة على شرايين الرقبة، الصلبة بيضاء.",
-      abd: "البطن لين وغير مؤلم عند اللمس، أصوات الأمعاء طبيعية، لا تضخم كبدي أو طحالي، لا كتلة أبهري نابضة.",
-      upper: "قوة العضلات 3/5 في الطرف العلوي الأيمن مقابل 5/5 في الأيسر، تون عضلي منخفض في اليمين، المنعكسات 1+ يميناً مقابل 2+ يساراً، إحساس بالنخز المنخفض في اليد اليمنى، النبض متساوٍ، لا وذمة.",
-      lower: "قوة 3/5 في الطرف السفلي الأيمن، انحراف القدم للخارج (foot drop) بسيط في اليمين، منعكس بابنسكي إيجابي يميناً، إحساس منخفض في الساق اليمنى، نبضات محسوسة ومتساوية، لا وذمة.",
-      extra: [
-        { label: "تقييم عصبي شامل (NIHSS)", q: "أريد تقييماً عصبياً شاملاً", find: "ضعف 3/5 في الطرفين الأيمنين، انحراف اللسان، حبسة تعبيرية، إهمال حسي أيسر، منعكس بابنسكي إيجابي يميناً — يوافق احتشاء في منطقة الشريان المخي الأوسط الأيسر." },
-        { label: "تصوير الدماغ المقطعي وتخطيط القلب", q: "اطلب تصويراً مقطعياً للدماغ وتخطيطاً للقلب", find: "التصوير المقطعي بلا نزف مع علامة مبكرة للشريان المخي الأوسط، وتخطيط القلب يُظهر رجفاناً أذينياً غير منتظم — يوافق جلطة دماغية إقفارية مصدرها القلب." }
-      ]
-    }
-  },
-  {
-    sex: "male", ageMin: 35, ageMax: 55,
-    diag: "نزيف هضمي علوي من قرحة هضمية (Bleeding Peptic Ulcer)",
-    cc: "تقيأت دم وبرازي صار أسود",
-    story: {
-      hpi: "من ثلاثة أيام برازي طلع لونه أسود وريحته كريهة ولزج. اليوم استفرغت دم أحمر غامق وبعدها شي مثل حبيبات القهوة. أحس بدوخة كبيرة وتعرق بارد، وقبل شوي حسيت أني بدي أغمى لما وقفت. معي وجع وحموضة أعلى بطني من أسابيع، يزيد بالليل ولما أكون فاضي، ويرتاح شوي لما آكل، وأخواتي قالوا يمكن قرحة.",
-      pmh: "ما عندي أمراض مزمنة معروفة ولا ربو، ولم أُدخل المستشفى سابقاً، وما عندي مشاكل بالكبد.",
-      psh: "لا عمليات سابقة، وما أخذت دم من قبل.",
-      fh: "لا يوجد تاريخ عائلي لأمراض مشابهة.",
-      meds: "قبل أسبوعين جاءني وجع شديد في ظهري وأخذت حبوب مسكن من الصيدلية (ديكلوفيناك/إيبوبروفين) بشكل مستمر، وأحياناً باراسيتامول. لا حساسية.",
-      sh: "أعمل في ورشة بناء، شغلي فيه جهد وتوتر. أدخن 10 سجائر يومياً، أشرب شاي ثقيل وأكلي غير منتظم، ما أشرب كحول.",
-      extra: "ما عندي قيء دموي سابق، ولا وجع في الصدر، ولا استعمال للأسبرين بانتظام. وزني نزل شوي من قلة الأكل. عندي دوخة مع الجهد."
-    },
-    exam: {
-      vitals: { bp: "94/60", hr: "118", rr: "22", temp: "36.8" },
-      head: "شحوب شديد في الجلد والملتحمة، الجلد بارد ورطب، الصلبة بيضاء بلا اصفرار (ينفي اليرقان)، اللسان جاف، لا تضخم في العقد اللمفية، لا JVD، لا علامات مرض كبدي مزمن.",
-      abd: "البطن لين مع حسّاسية في المنطقة فوق المعدة (epigastric tenderness)، لا دفاع ولا ارتداد، أصوات الأمعاء نشطة ومتزايدة، لا تضخم كبدي أو طحالي، لا كتلة، لا استسقاء، لا وريدات بارزة على جدار البطن.",
-      upper: "النبض ضعيف وسريع، الكفان باردان ورطبان، الامتلاء الشعري متأخر (3-4 ثوان)، لا وذمة.",
-      lower: "شحوب وبرودة في الأطراف السفلية، نبضات محسوسة لكن ضعيفة، لا وذمة، لا ألم في الربلة. يظهر براز أسود لزج كالقطران (melaena) على القفاز.",
-      extra: [
-        { label: "منظار المعدة (Endoscopy)", q: "أريد إجراء منظار للمعدة", find: "قرحة في الاثني عشر مع نزف فعال بحسب تصنيف فورست أعلى 1أ، مع علامة نزف حديثة — يوافق نزيفاً هضمياً علوياً من قرحة." },
-        { label: "فحص المستقيم (DRE)", q: "أريد فحص المستقيم", find: "براز أسود لزج كالقطران على القفاز، والاختبار يثبت وجود دم — يوافق نزيفاً هضمياً علوياً." },
-        { label: "صورة الدم ووظائف الكبد والتخثر", q: "اطلب صورة دم كاملة ووظائف الكبد ووظيفة التخثر", find: "هيموغلوبين 7.9 مع فقر دم، الصفائح ووظائف الكبد والتخثر طبيعية — يوافق فقر دم بنزيف حاد والكبد سليم." }
-      ]
-    }
-  },
-  {
-    sex: "male", ageMin: 20, ageMax: 34,
-    diag: "تمزق الرباط الصليبي الأمامي (ACL Tear)",
-    cc: "ركبتي تورمت وما أقدر أحمل وزني عليها",
-    story: {
-      hpi: "البارحة كنت ألعب كرة قدم، ثبتت رجلي على الأرض ولفيت جسمي بسرعة. سمعت صوت طقّة قوية في ركبتي وحسيت الركبة خرجت من مكانها ورجعت، ووقعت فوراً. وجع شديد أول دقائق، وبعدها بدأت تورم في ساعات قليلة. الآن ما أقدر أثنيها كامل ولا أمدّها كامل، وما أقدر أحمل وزني عليها أو أمشي إلا بصعوبة. أحس أنها غير ثابتة.",
-      pmh: "عندي ربو يجيني مع الجهد من أيام المدرسة، وأستخدم بخاخ نادراً. غير ذلك صحتي جيدة.",
-      psh: "لا عمليات سابقة، وما أخذت دم.",
-      fh: "لا تاريخ عائلي لأمراض مشابهة.",
-      meds: "أخذت إيبوبروفين لتخفيف الوجع والتورم، وبخاخ للربو عند الحاجة. لا حساسية.",
-      sh: "أنا شخص رياضي وألعب كرة القدم أسبوعياً، وأمشي للصالة مرتين بالأسبوع. موظف، لا أدخن.",
-      extra: "ما كان في احتكاك مباشر مع لاعب آخر، ولا يوجد صوت مستمر أو تعليق بالركبة، ولا تاريخ إصابات سابقة بالركبة. الركبة لم تتورم قبل هذا اليوم."
-    },
-    exam: {
-      vitals: { bp: "116/74", hr: "76", rr: "16", temp: "36.9" },
-      head: "لا شيء يذكر: المريض واعٍ ويبدو متألماً، لا شحوب، جلد طبيعي، صلبة بيضاء، لا تضخم في العقد اللمفية، لا JVD، فحص الصدر سليم (لا صفير مسموع وقت الفحص).",
-      abd: "البطن لين وغير مؤلم عند اللمس، أصوات الأمعاء طبيعية، لا تضخم أعضاء.",
-      upper: "نبضات كعبية متساوية، امتلاء شعري طبيعي، لا وذمة، لا ضعف حركي أو حسي، لا إصابات في الكتفين أو المرفقين.",
-      lower: "الركبة اليمنى: انتفاخ واضح (effusion) وحسّاسية على الخط المفصلي الوسطي، اختبار لاخمان إيجابي (إزاحة أمامية زائدة للقصبة)، اختبار ماكموري سلبي، لا قفل للمفصل، نقص بسيط في البسط الكامل (5-10 درجات)، مجس غير ثابت في اختبارات الدوران. الساق اليسرى سليمة. نبضات ظهر القدم طبيعية، لا علامة هومانز، لا وذمة في الساقين.",
-      extra: [
-        { label: "اختبارات الركبة الخاصة", q: "افحص الركبة باختبارات الرباط والصابونة", find: "اختبار لاخمان إيجابي، اختبار درو واختبار الإزاحة إيجابيان مع إحساس بعيد غير واضح، واختبار ماكموري سلبي — يوافق تمزق الرباط الصليبي الأمامي." },
-        { label: "تصوير الركبة بالرنين المغناطيسي", q: "اطلب تصويراً مغناطيسياً للركبة", find: "الرنين المغناطيسي يُظهر تمزقاً كاملاً في الرباط الصليبي الأمامي مع كدمة عظمية محورية وشرخ في الغضروف الهلالي الخارجي — يوافق تمزق الرباط الصليبي الأمامي." }
-      ]
-    }
-  },
-  {
-    sex: "male", ageMin: 60, ageMax: 75,
-    diag: "نقص تروية حاد في الطرف السفلي (Acute Limb Ischemia)",
-    cc: "جاني وجع شديد مفاجئ في رجلي اليمنى وصارت باردة وشاحبة",
-    story: {
-      hpi: "قبل ساعتين وأنا جالس، جاءني وجع فظيع وفجائي في ساقي اليمنى. الرجل صارت باردة جداً ولونها شاحب، وأحس بتنميل في أصابع قدمي ولا أقدر أحرك أصابعي أو قدمي زين. ما عندي تورم ولا حرارة ولا رضّة أو ضربة. الوجع ثابت وشديد جداً.",
-      pmh: "قالوا لي إن قلبي فيه رجفان ودقاته غير منتظمة، وعندي سكري. ما عندي ربو. ما سبق أن جاءتني حالة مثل هذه.",
-      psh: "لا عمليات سابقة، وما أخذت دم.",
-      fh: "والدي كان يعاني من أمراض القلب.",
-      meds: "آخذ حبوب لتنظيم ضربات القلب، وكانوا أعطوني حبوب تمييع دم لكن خلصت من أسبوعين ولم أجددها. لا حساسية من الأدوية.",
-      sh: "متقاعد، أدخن علبة يومياً من 30 سنة، كنت أعمل بمطعم، ما أمارس رياضة ومشي قليل.",
-      extra: "الوجع في الساق نفسها وليس في الظهر، وما يزيد أو يخِفّ بالحركة. ما عندي وجع بالصدر ولا ضيق نفس. الرجل اليسرى طبيعية."
-    },
-    exam: {
-      vitals: { bp: "152/86", hr: "102", rr: "20", temp: "36.9", extra: "النبض غير منتظم تماماً في الإيقاع (irregularly irregular — رجفان أذيني)" },
-      head: "لا شيء مهماً: وعي طبيعي، صلبة بيضاء بلا اصفرار، لا شحوب، لا تضخم في العقد اللمفية، لا JVD، لا علامات جلطة دماغية، لا نفخة على الشرايين العنقية.",
-      abd: "البطن لين غير مؤلم، لا كتلة أبهري نابضة، أصوات الأمعاء طبيعية، لا تضخم أعضاء.",
-      upper: "النبض غير منتظم تماماً في الإيقاع، نبضات كعبية متساوية في الطرفين، لا وذمة، أظافر مصفرّة قليلاً، لا ضعف حركي.",
-      lower: "الساق اليمنى: شاحبة وباردة مقارنة باليسرى، غياب النبض في الشريان الفخذي والظنبوبي الخلفي وظهر القدم، تعبئة شعرية متأخرة جداً، إحساس منخفض في القدم، عدم القدرة على ثني أو بسط أصابع القدم أو رفع القدم بشكل كامل، ليونة عضلية بسيطة في الربلة، لا وذمة، لا خطوط حمراء. الساق اليسرى طبيعية ونبضاتها محسوسة.",
-      extra: [
-        { label: "دوبلر الشرايين ومؤشر الكاحل على العضد", q: "اطلب دوبلر الشرايين وقِس مؤشر الكاحل على العضد", find: "غياب الإشارات الشريانية في الظنبوب الخلفي وظهر القدم، ومؤشر الكاحل على العضد 0.25، وتدفق ضعيف جداً في الشريان الفخذي — يوافق إقفاراً حاداً يستدعي تدخلاً عاجلاً." },
-        { label: "تخطيط القلب وتصوير الشرايين", q: "اطلب تخطيط القلب وتصوير الشرايين", find: "تخطيط القلب يُظهر رجفاناً أذينياً غير منتظم، وتصوير الشرايين يُظهر انسداداً في الشريان الفخذي الأيسر مع نقص التصريف — يوافق انسداداً شريانياً حاداً مصدره خثرة من القلب." }
-      ]
+      head: "المريض يتألم، اللسان جاف قليلاً.",
+      abd: "حسّاسية شديدة عند اللمس في الربع السفلي الأيمن عند نقطة ماكبرني، مع دفاع عضلي (guarding). علامة روفسنغ إيجابية.",
+      upper: "طبيعي.", lower: "طبيعي.",
+      extra: [ { label: "تحليل دم", q: "اطلب تحليل دم", find: "كريات بيضاء 14.2 (ارتفاع)، CRP مرتفع." } ]
     }
   }
 ];
 
-const LEGACY_CATS = [
-  "الجراحة العامة",
-  "القلب والصدر",
-  "الجراحة العامة",
-  "النساء والتوليد",
-  "الأعصاب",
-  "الغدد والسكري والروماتيزم",
-  "الأعصاب",
-  "الجهاز الهضمي والكبد",
-  "العظام والإصابات",
-  "الجراحة العامة"
-];
-
-const CASES = LEGACY_CASES.concat(window.__CASES__ || []).map((c, i) => {
-  if (!c.cat) c.cat = LEGACY_CATS[i] || "متنوع";
-  return c;
-});
-
-const CATEGORIES = [];
-CASES.forEach(c => { if (!CATEGORIES.includes(c.cat)) CATEGORIES.push(c.cat); });
-
-const RULES = `أنت تمثّل دور مريض في تدريب طبي، ومعك راوٍ سريري. المستخدم هو الطبيب الذي يأخذ منك السيرة المرضية بالترتيب.
-
-لديك ثلاثة أوضاع للكتابة، ويجب أن تبدأ كل ردّ بوسم الوضع في أول سطر:
-[A] للمريض: ابدأ الرد بالوسم [كلام]
-[B] للفحص السريري: ابدأ الرد بالوسم [فحص]
-[C] لتقرير المدرّب السريري (التقييم): ابدأ الرد بالوسم [تقييم]
-
-==== قواعد كلام المريض (الوسم [كلام]) ====
-1. تصرّف كمريض عادي لا يعمل في المجال الطبي، **ولا يعرف أي كلمة إنجليزية أبداً**. تكلم **بالعربية العامية فقط** كما يتكلم شخص محلي بسيط، مثل: «بطني بتتقطع»، «عندي مغص شديد»، «نفسي مكتوم»، «راسي بينفجر من الصداع»، «طلع دم مع البراز»، «عملوا لي صورة للصدر». **ممنوع منعاً باتاً استخدام أي كلمة إنجليزية أو مصطلح لاتيني أو اختصار أجنبي أو اسم دواء/تحليل/مرض بالإنجليزية داخل كلامك**، وممنوع خلط جملة إنجليزية، وممنوع الكلام الطبي المعقّد. لا تقل «عندي pain في الـ abdomen» ولا «آخذ Panadol»، بل قل «بطني يوجعني كثير» و«آخذ حبة للضغط من الصيدلية». وإذا احتجت تسمية دواء أو تحليل أو فحص فاذكره بالعربية كما يفهمه إنسان عادي (حبة الضغط، حبة السكر، إبرة الأنسولين، تحليل الدم، صورة الأشعة)، وإذا لم تعرف اسمه العربي فقل «حبة» أو «تحليل» أو «صورة» بلا تفصيل. صف كل شعور وعضو ودواء بالعامية البسيطة بلا شرح وبلا تعريف، ولا تستخدم الفصحى الطبية (قل «بطني يوجعني من الجهة اليمنى تحت» ولا تقل «ألم حاد في الربع السفلي الأيمن»).
-2. أنت لا تعرف اسم مرضك ولا التشخيص. لا تذكر التشخيص ولا تلمّح إليه أبداً، حتى لو اقترحه الطبيب أو سألك عنه مباشرة؛ عندها تفاعل بشكل طبيعي فقط ("الله يستر، هذا خطير؟" أو "ما أدري، هذا اللي جايكم تعرفونه").
-3. **لا تتطوع بأي معلومة من تلقاء نفسك.** أجب فقط عن السؤال المطروح، ودع الطبيب يقود المقابلة بالكامل. لا تنتقل إلى قسم آخر من السيرة قبل أن يسأل عنه.
-4. إذا كان السؤال مغلقاً (نعم/لا) فأجب مباشرة بجملة قصيرة. إذا كان مفتوحاً فأضف تفصيلاً بسيطاً ثم توقف وانتظر السؤال التالي.
-5. لا تكتب قوائم ولا نقاط مرقّمة. تحدث بجمل طبيعية قصيرة، من سطر إلى ثلاثة أسطر في الغالب.
-
-==== ترتيب أقسام السيرة (لا تكشف أي قسم إلا عندما يسأل الطبيب عنه) ====
-6. الشكوى الرئيسية: عندما يسأل "ما الذي جاء بك؟" أو ما شابه، اذكر عرضك الأساسي فقط في جملة واحدة قصيرة بلغة عامية، دون تفاصيل.
-7. تاريخ المرض الحالي: انتظر أسئلة SOCRATES (الموقع، وقت البداية، طبيعة الألم، انتشاره، الأعراض المصاحبة، مدته، ما يزيده وما يخففه، شدته من 10) وأجب عنها خطوة بخطوة.
-8. التاريخ السابق: الأمراض المزمنة، العمليات السابقة، والأدوية التي تتناولها حالياً. لا تذكر أيّاً منها إلا إذا سأل الطبيب عن تاريخك المرضي أو عملياتك أو أدويتك الحالية.
-9. التاريخ المرضي الخاص (مهم جداً): لديك قرار داخلي ثابت حول ثلاثة أمور فقط: (أ) تاريخ نقل دم، (ب) حساسية من دواء، (ج) ربو شعبي. **لا تكشف أيّاً منها إلا إذا سأل الطبيب عنها صراحةً** (مثل "هل أخذت دم يوماً؟" أو "هل عندك حساسية من دواء؟" أو "هل عندك ربو؟").
-10. التاريخ النسائي والتوليدي (OB/GYN): فقط إذا كان المريض أنثى، وإذا سأل الطبيب صراحةً عن الحمل أو عدد الولادات أو الإجهاض أو عدد الأطفال الأحياء أو آخر دورة شهرية أو وسائل منع الحمل (أجب من ملفك السري). وإذا سُئلت أنثى عن الحمل ولم يكن في ملفها بند نسائي فاختاري جواباً معقولاً وثبّتِ عليه. إذا كان المريض ذكراً وسُئل عن الحمل أو تاريخ نسائي، فتفاعل بشكل طبيعي مستغرباً ("أنا رجل يا دكتور!").
-11. التاريخ العائلي والتاريخ الاجتماعي (التدخين، الكحول، العمل، النشاط): أجب فقط عند السؤال.
-12. إذا سُئلت عن شيء لا يعرفه المريض (نتائج تحاليل، أسماء أدوية أو أمراض) فقل إنك لا تعرف.
-13. ابقَ متسقاً تماماً مع ملفك السري (التواريخ، الأعراض، الأدوية، العمل، الحالة الاجتماعية، الأرقام): لا تخترع تفاصيل تناقضه، وإذا سُئلت عن شيء غير مذكور فاختر جواباً معقولاً ومتسقاً معه وثبّت عليه في كل الأسئلة التالية.
-
-==== قواعد الراوي السريري (الوسم [فحص]) ====
-14. إذا قال الطبيب إنه سيفحص منطقة معينة من جسمك (بطن، رأس وعنق، أطراف علوية، أطراف سفلية، أو أي فحص آخر)، اخرج لحظياً من دور المريض واكتب النتائج الموضوعية للفحص فقط، بصيغة راوٍ سريري موجز ودقيق، **بالعربية الطبية الفصيحة الموجزة**، مستعيناً ببند «نتائج الفحص» في ملفك السري، مع كتابة أرقام الفحص كما هي (مثل: ضعف القوة 3/5 في الطرف الأيمن، حسّاسية عند اللمس في الربع السفلي الأيمن، علامة مورفي إيجابية). وأما العلامات الحيوية (الضغط والنبض والتنفس والحرارة) فلا تُذكر أبداً داخل نتائج الفحص الجهازي، ولها بند خاص بها (القاعدة 14-ب). **لا تكتب أي كلمة أو اختصار إنجليزي أو لاتيني في رد الفحص**: اكتب «أصوات الأمعاء طبيعية» لا BS normal، و«لا إيلام عند اللمس ولا حماية عضلية» لا non-tender/no guarding، وسمِّ كل عضو بالعربية (الصلبة، الوريد الوداجي، الكبد، الطحال، الزاوية الضلعية الفقرية…). ملاحظة: ملفك السري قد يحتوي مصطلحات إنجليزية بين قوسين للتوضيح فقط — لا تنقلها إلى ردّك، بل اكتب المعنى بالعربية وحدها.
-14-ب) العلامات الحيوية (Vital Signs): **ممنوع منعاً باتاً ذكر أي رقم من العلامات الحيوية داخل كلام المريض أو داخل نتائج الفحص الجهازي** (الرأس والعنق، البطن، الأطراف العلوية، الأطراف السفلية). تُذكر العلامات الحيوية في ردّ فحص مستقل فقط عندما يطلب الطبيب قياسها صراحةً (مثل: «أريد قياس علاماتك الحيوية»، «ما ضغطه؟»، «قِس له النبض والحرارة والتنفس»)، وعندها اخرج كراوٍ سريري واكتب تحت وسم [فحص] القيم الأربعة بصيغة طبية عربية موجزة بلا أي اختصار إنجليزي: ضغط الدم ثم معدّل النبض ثم معدّل التنفس ثم درجة الحرارة، مأخوذة حرفياً من بند «العلامات الحيوية» في ملفك السري، مع أي ملاحظة مذكورة فيه عن العلامات الحيوية (مثل عدم انتظام النبض). وإذا سأل عن قيمة واحدة فقط فاذكرها هي ويمكنك إكمال البقية. تنبيه: السؤال «هل عندك حرارة؟» أو «هل نبضك سريع؟» هو سؤال عن الأعراض ولا يُعدّ طلباً لقياس العلامات الحيوية.
-15. اكتب فقط نتائج المنطقة التي طلب الطبيب فحصها. لا تذكر نتائج منطقة لم يطلب فحصها. اذكر الإيجابيات والسلبيات المهمة باختصار (جملة سردية واحدة إلى ثلاث) بالعربية الطبية الموجزة، ولا تذكر أي تشخيص.
-16. إذا طلب الطبيب فحص منطقة غير مذكورة في ملفك، فاكتب أن الفحص طبيعي/لا شيء يذكر في تلك المنطقة.
-17. لا تذكر أي تشخيص في رد الفحص، ولا تُبرز سبب النتائج، فقط النتائج كما تُلاحظ.
-18. بعد نتائج الفحص يمكنك أن تضيف سطراً واحداً قصيراً من كلام المريض فقط إذا كان ذلك واقعياً ومفيداً، ويجب أن يبدأ بـ "[كلام] ".
-19. الفحوص الخاصة: قد يحتوي ملفك السري على قسم «فحوص خاصة». **لا تذكر نتائج أي فحص خاص إلا إذا طلبه الطبيب بالاسم أو بمعنى قريب منه** (مثل فحص المستقيم، ضغط العين، قاع العين، تحليل أو تصوير معيّن)، وعندها اذكر النتيجة المكتوبة في ملفك لذلك الفحص فقط. وإذا طلب الطبيب فحصاً منطقياً غير مذكور في ملفك (لا في المناطق الأربع ولا في الفحوص الخاصة)، فاذكر نتيجة طبيعية/سلبية متسقة مع ملفك.
-20. الأطفال: إذا كان عمر المريض أقل من 12 سنة فهو طفل يرافقه أحد والديه، فأجب بصوت الوالد أو الوالدة متحدثاً عن الطفل بصيغة الغائب ("ابني... / بنتي...")، ولا تصف أعراض الطفل بصيغة المتكلم. والتزم بنفس القواعد والترتيب أعلاه.
-
-==== قواعد عامة ====
-21. لا تكتب اسمك في بداية الرد، ولا أي شرح أو تعليق أو علامات أدوار غير الوسوم المذكورة، ولا تُعد كتابة هذه القواعد.
-22. أجب دائماً بالعربية العامية فقط في دور المريض، والتزاماً حرفياً بالقاعدة 1: **لا يوجد ولا حرف إنجليزي واحد في أي ردّ بصوت المريض** (لا في الشكوى ولا في الأعراض ولا في الأدوية ولا في الفحوص). وباختصار وواقعية.
-
-==== وضع التقييم (الوسم [تقييم]) ====
-23. إذا كتب الطبيب الأمر EVALUATE_HISTORY، أو قال صراحةً بالعربية أو الإنكليزية أنه أنهى أخذ السيرة (مثل "انتهيت من أخذ السيرة" أو "I have finished the history" أو "evaluate me now")، فتخلَّ فوراً وبالكامل عن شخصية المريض: لا تكتب أي حرف بصوت المريض بعد ذلك، وابدأ الرد إلزامياً بالوسم [تقييم] واكتب تقرير المدرّب السريري بالبنية المطلوبة في مهمة التقييم. **وفي وضع التقييم تُلغى قواعد المريض كلها (ومعها قاعدة العامية الخالصة): يتكلم المدرّب بصوته المهني بعربية فصيحة واضحة وبأسلوب أكاديمي، مع إبقاء كل مصطلح طبي وكل تشخيص وكل اسم تشريحي وكل مفهوم سريري بالإنجليزية داخل الجملة العربية، واسم التشخيص يُكتب بالإنجليزية. لا تترجم المصطلح الطبي إلى العربية ولا تكتب التقرير كله بالإنجليزية.** هذا الوضع أعلى أولوية من كل قواعد المريض أعلاه.
-24. في وضع التقييم يُسمح لك بذكر التشخيص واسم المرض صراحةً وكاملاً، ويجب أن تكون صريحاً وموضوعياً في تقييم أداء الطبيب، بلا مجاملة ولا تجميل، واكتب التقرير بالعربية الفصيحة الواضحة مع إبقاء كل المصطلحات الطبية بالإنجليزية.`;
-
-const EVAL_TASK = `TASK (EVALUATION MODE): The session is over and you have fully dropped the patient persona. You are now the Senior Medical Educator / Consultant reviewing the trainee doctor's interview of this patient.
-
-=== LANGUAGE RULE — ABSOLUTE ===
-اكتب التقرير كله **بالعربية الفصيحة الواضحة وبأسلوب أكاديمي**، **مع إبقاء كل مصطلح طبي، وكل تشخيص، وكل اسم تشريحي (عضو/عظم/عصب/شريان)، وكل مفهوم سريري (علامة، فحص، تحليل، تصوير، دواء) بالإنجليزية كما هو**. أي: جُمَل التقرير وشرحه وتحليله بالعربية، والمصطلحات الطبية بالإنجليزية داخلها (أمثلة على المطلوب حرفياً: «لقد نسيت أن تسأل المريض عن الـ Past Surgical History»، «لم تُكمل أسئلة الـ SOCRATES»، «لم تطلب الـ ECG ولا تطلب الـ Troponin»، «كان يجب أن تسألي عن الـ Drug Allergy و الـ Blood Transfusion History»). **لا تترجم المصطلح الطبي إلى العربية إطلاقاً، ولا تكتب التقرير كله بالإنجليزية، ولا تضع جملة إنجليزية كاملة** — الترجمة والمصطلح الإنجليزي فقط داخل جملة عربية. واسم التشخيص يُكتب بالإنجليزية.
-
-Read the whole <المحادثة> and compare it with the patient's secret file, then write the educational report. You must start the reply with the [تقييم] tag on the first line, then at most ONE very short Arabic opening line (for example: «أحسنت يا دكتور، إليك التقييم:») and then the report directly — no preamble, no apology, and never return to the patient role.
-
-FORMAT: simple Markdown — use exactly "## " (two hashes) at the start of the four numbered section headings, "### " (three hashes) for the sub-headings inside them, and "-" for bullets. Write the section/sub-section headings in Arabic EXACTLY as written below (you may add the English gloss in parentheses as shown). No tables. No LaTeX and no math symbols; write the arrow literally as → (for example: «allergys» → «allergies»).
-CRITICAL: the report consists of **four mandatory sections, all of them, in this exact order (1 then 2 then 3 then 4) and with the exact Arabic headings written below** — never delete a section, never merge two sections, never renumber them. If you find no material for a section, state that explicitly inside it instead of deleting it. Do not add any other section except the annexe specified at the very end of these instructions.
-
-## 1) التشخيص الصحيح (The Exact Diagnosis)
-ابدأ بالجملة التالية ثم أكملها باسم التشخيص بالإنجليزية: «التشخيص المخفي لهذه الحالة هو: [Diagnosis in English]»، ثم جملة أو جملتان بالعربية مع المصطلحات بالإنجليزية تذكران المفاتيح في السيرة والفحص التي تدل عليه.
-
-## 2) النواقص السريرية (Clinical Gaps — History Taking)
-**إلزامي — العلامات الحيوية (Vital Signs):** تحقّق صراحةً مما إذا كان الطبيب قد طلب قياس العلامات الحيوية (Blood Pressure، Heart Rate، Respiratory Rate، Temperature)، معتمداً على السطر الحاسم «هل طلب الطبيب العلامات الحيوية؟» في نهاية هذه التعليمات. فإذا لم يطلبها الطبيب، فهذا **نقص سريري جسيم (Major Missed Point)** يجب أن تذكره صراحةً وبوضوح في هذا القسم، ثم مرة أخرى في «### المعلومات الناقصة الحرجة (Critical Missing Information)». وإذا طلبها، فاذكر ذلك في «### نقاط القوة (Strengths)» وقيّم هل قاس الأربعة كاملة أم اكتفى ببعضها.
-حلّل أسئلة الطبيب مقابل الممارسة السريرية المعيارية: الـ SOCRATES للألم، والأعراض المصاحبة والمراجعة الجهازية، والـ PMH و الـ PSH، والأدوية الحالية، والـ Drug Allergy، وتاريخ نقل الدم (Blood Transfusion)، والتاريخ العائلي والاجتماعي (التدخين/الكحول/العمل)، والتاريخ النسائي والتوليدي عند المريضة الأنثى، والـ Red Flags الخاصة بهذا التشخيص. واذكر لكل نقطة تبريرها السريري بالعربية.
-### نقاط القوة (Strengths)
-نقطتان إلى ثلاث نقاط فقط بالعربية: ما أحسن الطبيب فعله فعلاً، مع ذكر المصطلح الإنجليزي للجزء الذي أتقنه.
-### المعلومات الناقصة الحرجة (Critical Missing Information)
-من أربع إلى ست نقاط بالعربية، مرتّبة من الأشد خطراً إلى الأقل، وكل نقطة تذكر المصطلح الإنجليزي للمعلومة الناقصة (مثل: الـ Family History، الـ Occupational History، الـ Night Pain) مع سبب أهميتها السريرية.
-### أسئلة كان يجب أن تسألها (Questions You Should Have Asked)
-من أربع إلى ستة أسئلة جاهزة، **اكتب نصّ كل سؤال بالإنجليزية بين علامتي تنصيص** («...») حتى يستخدمه المتدرّب كما هو، ويمكن أن يتبعه سطر عربي قصير يوضّح الهدف منه.
-### ملاحظات على أسلوب المقابلة (Interview Technique Notes)
-بالعربية مع المصطلحات بالإنجليزية: الأسئلة المفتوحة مقابل المغلقة، والأسئلة المزدوجة أو الموجِّهة (Double-barrelled / Leading)، ومقاطعة المريض، وترتيب الأقسام، وفرصة تشخيصية ضائعة، وأي خطأ في تفسير أعراض المريض. صحّح بلطف لكن بصراحة.
-(If an examination appears in the conversation, also assess whether the doctor requested the examinations appropriate for this diagnosis and whether all relevant findings were actually elicited — بالعربية مع المصطلحات بالإنجليزية.)
-
-## 3) التقييم اللغوي والطبي (Language & Spelling Check)
-This section is mandatory even if the doctor's input was flawless. Act as a strict proofreader. Review every message written by the doctor; their verbatim text is numbered in "the doctor's questions, verbatim" below.
-### أخطاء الإملاء والقواعد (Spelling & Grammar Errors)
-إذا كتب الطبيب بالإنجليزية: اقتبس الخطأ حرفياً بين «...» ثم اكتب الصواب بعده في نفس السطر بصيغة «wrong» → «correct» (مثال محقّق: «any allergys» → «any allergies»)، واشرح الخطأ بالعربية في سطر قصير. وإذا كتب الطبيب بالعربية: اقتبس عبارته العربية كما هي بين «...» ثم أعطِ الصياغة العربية المصحّحة، واذكر في نفس السطر المصطلح الإنجليزي الدقيق الذي كان يقصده. افحص أيضاً: الهمزات، والتاء المربوطة، والجمع، والـ Singular/Plural في المصطلحات، وتناسق المصطلح الواحد في كل الرسائل (لا مرة «abdominal pain» ومرة «stomach ache»).
-### المصطلحات الطبية (Medical Terminology)
-اذكر بالإنجليزية التهجئة الصحيحة لأي مصطلح طبي أخطأ الطبيب في كتابته، والمصطلح الإنجليزي الأكثر دقة إذا استخدم تعبيراً عامّاً أو غير معياري (مثل: «stomach ache» → «epigastric pain»، «sugar disease» → «Diabetes Mellitus»)، مع سطر عربي قصير يشرح الفرق.
-### عدد الأخطاء (Error Count)
-سطر واحد بالعربية يذكر عدد الأخطاء. وإذا كانت كتابة الطبيب سليمة تماماً فقل ذلك صراحةً ولا تخترع أخطاء — بل أشر بدلاً من ذلك إلى صياغات كان يمكن أن تكون أدق.
-
-## 4) الخلاصة والخطوات التالية (Summary & Next Steps)
-من ثلاثة إلى خمسة أسطر بالعربية: درجة إجمالية تُكتب بالضبط بصيغة "Overall: X/10"، ثم أهم **ثلاثة** أمور يجب أن يركّز عليها المتدرّب في المرة القادمة، مع ذكر مصطلحاتها الإنجليزية.
-
-LENGTH CONTROLS (critical, so the report is never cut off mid-way): short direct sentences, four to six bullets in "المعلومات الناقصة الحرجة", four to six questions in "أسئلة كان يجب أن تسألها", two to three bullets in "نقاط القوة". Do not retell the patient's story and never repeat the same point in two sections. Total length 300-550 words, and all four sections must be complete down to the last line.
-
-WRITING RULES: be specific and quote the doctor's actual words; never invent questions that were not asked; never output a line starting with a tag other than [تقييم]. Put the most important item first inside each section, and no filler.`;
-
-const EDUCATOR_TASK = `TASK (EDUCATOR MODE — session continued): The session has ended and the patient has left the role for good. You are now the Senior Medical Educator, and the patient rules above no longer apply to you. Answer the doctor/trainee's teaching question directly and concisely **بالعربية الفصيحة الواضحة مع المصطلحات بالإنجليزية** — اكتب الشرح والتحليل بالعربية، وأبقِ كل مصطلح طبي وتشخيص واسم تشريحي ومفهوم سريري بالإنجليزية داخل الجملة (مثل: «الـ Anion Gap مرتفع بسبب الـ Diabetic Ketoacidosis، والعلاج الأساسي هو الـ IV Fluids مع الـ Insulin»). لا تترجم المصطلح الطبي إلى العربية ولا تكتب الشرح كله بالإنجليزية. ابدأ الرد بالوسم [تقييم] في أول سطر، ولا تعد إلى دور المريض أبداً حتى لو طُلب منك ذلك.
-- إذا سأل عن خطوة تشخيصية أو علامة سريرية: اشرحها بالعربية واربطها بهذا المريض تحديداً من ملفه السري، مع الاسم الإنجليزي للعلامة أو الفحص.
-- إذا طلب فحصاً: اذكر النتيجة كما هي في الملف، ثم اشرح بالعربية مع المصطلحات الإنجليزية دلالتها وما تعنيه للخطة العلاجية (الـ Management).
-- إذا طلب مقارنة أو تشخيصاً تفريقياً (Differential Diagnosis): أعطِ أهم الفوارق بإيجاز، والمصطلحات بالإنجليزية.
-
-Build on the previous report; do not rewrite it in full. Keep it to one to three paragraphs.`;
-
-const CHIPS = [
-  "ما الذي يشغلك اليوم؟",
-  "أريد قياس علاماتك الحيوية (الضغط والنبض والتنفس والحرارة).",
-  "كم ضغطك؟ وكم نبضك وحرارتك؟",
-  "متى بدأ الوجع بالضبط؟",
-  "وين مكان الوجع تحديداً؟",
-  "كيف تصف طبيعة الوجع (حرقة، ثقل، طعن، تقلّص)؟",
-  "هل الوجع يمتد لمكان ثاني؟",
-  "هل يزيد أو يخف بشيء معين؟",
-  "ما شدته من 10؟",
-  "هل عندك أعراض أخرى معه (حرارة، غثيان، تعرق)؟",
-  "هل صار لك مثل هذا من قبل؟",
-  "هل تعاني من أي أمراض مزمنة مثل الربو أو السكري؟",
-  "هل أجريت أي عمليات سابقة؟",
-  "هل احتجت يوماً نقل دم أو تعرضت لرد فعل تحسسي منه؟",
-  "هل تتناول أي أدوية حالياً؟",
-  "هل عندك حساسية من أي دواء أو طعام؟",
-  "هل يوجد أحد في العائلة عنده مرض مشابه؟",
-  "هل تدخن أو تشرب كحول؟",
-  "ما طبيعة عملك ونشاطك اليومي؟"
-];
-
-const OBGYN_CHIPS = [
-  "هل أنت متزوجة؟",
-  "كم مرة حملتِ في حياتك؟",
-  "كم ولادة عندك؟ وهل عندك أي إجهاض؟",
-  "كم عدد أطفالك الأحياء؟",
-  "متى كانت آخر دورة شهرية لك؟ وهل هي منتظمة؟",
-  "هل تستخدمين أي وسيلة لمنع الحمل؟",
-  "هل عندك أي مشاكل نسائية أو عمليات في الرحم؟"
-];
-
-const EXAMS = [
-  { key: "vitals", label: "📊 قياس العلامات الحيوية (الضغط • النبض • التنفس • الحرارة)", q: "سأقيس الآن علاماتك الحيوية: الضغط والنبض والتنفس والحرارة.", vitals: true },
-  { key: "head", label: "فحص الرأس والعنق", q: "سأفحص الآن رأسك وعنقك." },
-  { key: "abd", label: "فحص البطن", q: "سأقوم الآن بفحص بطنك." },
-  { key: "upper", label: "فحص الأطراف العلوية", q: "سأفحص الآن ذراعيك وأطرافك العلوية." },
-  { key: "lower", label: "فحص الأطراف السفلية", q: "سأفحص الآن ساقيك وأطرافك السفلية." }
-];
-
+// --- المنطق الداخلي (بديل الذكاء الاصطناعي) ---
 const chatWindowEl = document.getElementById("chatWindow");
 const doctorInputEl = document.getElementById("doctorInput");
 const sendBtnEl = document.getElementById("sendBtn");
-const patientNameEl = document.getElementById("patientNameEl");
-const patientAgeEl = document.getElementById("patientAgeEl");
-const patientSexEl = document.getElementById("patientSexEl");
-const patientCatEl = document.getElementById("patientCatEl");
-const patientAvatarEl = document.getElementById("patientAvatar");
-const ccEl = document.getElementById("ccEl");
-const answerPanelEl = document.getElementById("answerPanel");
-const catFilterEl = document.getElementById("catFilterEl");
-const caseCountEl = document.getElementById("caseCountEl");
 const evalBtnEl = document.getElementById("evalBtn");
-const evalBannerEl = document.getElementById("evalBanner");
-const DOCTOR_PLACEHOLDER = doctorInputEl.getAttribute("placeholder");
-const sheetFields = [
-  "sheet_vitals", "sheet_cc", "sheet_hpi", "sheet_pmh", "sheet_psh", "sheet_fh", "sheet_meds", "sheet_sh", "sheet_obgyn", "sheet_dx",
-  "sheet_exam_head", "sheet_exam_abd", "sheet_exam_upper", "sheet_exam_lower", "sheet_exam_other"
+const CHIPS = [
+  "متى بدأ الوجع بالضبط؟", "وين مكان الوجع تحديداً؟", "هل يزيد أو يخف بشيء معين؟",
+  "هل تعاني من أي أمراض مزمنة؟", "هل أجريت أي عمليات سابقة؟", "هل تتناول أي أدوية حالياً؟",
+  "هل عندك حساسية من أي دواء؟", "هل تدخن أو تشرب كحول؟", "سأقيس الآن علاماتك الحيوية.",
+  "سأقوم الآن بفحص بطنك."
+];
+const EXAMS = [
+  { key: "vitals", label: "📊 قياس العلامات الحيوية", q: "سأقيس العلامات الحيوية" },
+  { key: "head", label: "فحص الرأس والعنق", q: "فحص الرأس" },
+  { key: "abd", label: "فحص البطن", q: "فحص البطن" },
+  { key: "upper", label: "فحص الأطراف العلوية", q: "فحص الأطراف العلوية" },
+  { key: "lower", label: "فحص الأطراف السفلية", q: "فحص الأطراف السفلية" }
 ];
 
-const state = { caseIdx: -1, caseData: null, patient: null, messages: [], busy: false, evaluated: false, vitalsTaken: false };
+let state = { caseIdx: 0, caseData: null, evaluated: false, historyAsked: {} };
 
 function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-function namePool(sex) {
-  try {
-    const list = sex === "female" ? root.female_names : root.male_names;
-    const arr = [...list.selectAll].map(n => n.evaluateItem).map(s => String(s).trim()).filter(Boolean);
-    if (arr.length) return arr;
-  } catch (e) {}
-  return sex === "female" ? ["فاطمة", "مريم"] : ["أحمد", "محمود"];
-}
-
-function scrollChat() { chatWindowEl.scrollTop = chatWindowEl.scrollHeight; }
 
 function addBubble(role, text, mode) {
   const div = document.createElement("div");
   const kind = role === "doctor" ? "doctor" : role === "evaluator" ? "eval" : "patient";
   div.className = "bubble " + kind + (mode === "exam" ? " exam" : "");
-  if (mode === "exam") {
-    const t = document.createElement("div");
-    t.className = "exam-tag";
-    t.textContent = "🔍 الفحص السريري";
-    div.appendChild(t);
-  }
-  if (mode === "eval" && role === "evaluator") {
-    const t = document.createElement("div");
-    t.className = "eval-tag";
-    t.textContent = "🎓 تقرير المدرّب السريري";
-    div.appendChild(t);
-  }
+  if (mode === "exam") div.innerHTML = '<div class="exam-tag">🔍 الفحص السريري</div>';
+  if (role === "evaluator") div.innerHTML = '<div class="exam-tag" style="color:#5b21b6;">🎓 تقرير التقييم</div>';
+  
   const body = document.createElement("div");
-  body.className = "bubble-body";
-  if (mode === "eval") body.innerHTML = mdToHtml(text);
-  else body.textContent = text || "";
+  body.innerHTML = text.replace(/\n/g, '<br>');
   div.appendChild(body);
   chatWindowEl.appendChild(div);
-  scrollChat();
-  return div;
+  chatWindowEl.scrollTop = chatWindowEl.scrollHeight;
 }
 
-function addSystemNote(text) {
-  const div = document.createElement("div");
-  div.className = "sys-note";
-  div.textContent = text;
-  chatWindowEl.appendChild(div);
-  scrollChat();
-  return div;
-}
-
-function escapeHtml(s) {
-  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
-
-function inlineMd(s) {
-  return s
-    .replace(/\$\s*\\leftarrow\s*\$/g, "←")
-    .replace(/\$\s*\\rightarrow\s*\$/g, "→")
-    .replace(/\\leftarrow\b|\bleftarrow\b/g, "←")
-    .replace(/\\rightarrow\b|\brightarrow\b/g, "→")
-    .replace(/\\to\b/g, "→")
-    .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/__([^_\n]+)__/g, "<strong>$1</strong>")
-    .replace(/`([^`\n]+)`/g, "<code>$1</code>")
-    .replace(/(^|[\s(«"'])\*([^*\n]+)\*(?=$|[\s).,،;:»"'])/g, "$1<em>$2</em>");
-}
-
-function mdToHtml(text) {
-  const lines = escapeHtml(text).replace(/\r/g, "").split("\n");
-  const out = [];
-  let listType = null;
-  function closeList() { if (listType) { out.push("</" + listType + ">"); listType = null; } }
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (!line) { closeList(); continue; }
-    let m;
-    if ((m = line.match(/^(#{1,6})\s*(.+)$/))) {
-      closeList();
-      const txt = m[2];
-      const isSection = /^\d+\s*[).]/.test(txt) || m[1].length <= 2;
-      const lvl = isSection ? 2 : (m[1].length >= 4 ? 4 : 3);
-      out.push("<h" + lvl + ">" + inlineMd(txt) + "</h" + lvl + ">");
-      continue;
-    }
-    if (/^(?:-{3,}|\*{3,}|_{3,})$/.test(line)) { closeList(); out.push("<hr>"); continue; }
-    if ((m = line.match(/^[-*•·]\s+(.+)$/))) {
-      if (listType !== "ul") { closeList(); out.push("<ul>"); listType = "ul"; }
-      out.push("<li>" + inlineMd(m[1]) + "</li>");
-      continue;
-    }
-    if ((m = line.match(/^\d+[.)]\s+(.+)$/))) {
-      if (listType !== "ol") { closeList(); out.push("<ol>"); listType = "ol"; }
-      out.push("<li>" + inlineMd(m[1]) + "</li>");
-      continue;
-    }
-    closeList();
-    out.push("<p>" + inlineMd(line) + "</p>");
-  }
-  closeList();
-  return out.join("");
-}
-
-function bubbleBodyEl(bubble) { return bubble.querySelector(".bubble-body") || bubble; }
-
-function addTypingBubble(kind) {
-  const div = document.createElement("div");
-  div.className = "bubble patient typing" + (kind === "eval" ? " eval" : "");
-  div.innerHTML = "<span></span><span></span><span></span>";
-  chatWindowEl.appendChild(div);
-  scrollChat();
-  return div;
-}
-
-function renderStreaming(bubble, text, mode) {
-  if (mode === "eval") bubble.innerHTML = mdToHtml(text);
-  else bubble.textContent = text || "";
-}
-
-function setBusy(busy) {
-  state.busy = busy;
-  sendBtnEl.disabled = busy;
-  doctorInputEl.disabled = busy;
-  if (evalBtnEl) evalBtnEl.disabled = busy || state.evaluated;
-  [...document.querySelectorAll(".exam-btn")].forEach(b => { b.disabled = busy; });
-  sendBtnEl.textContent = busy ? "يعمل..." : "إرسال";
-}
-
-function stripNamePrefix(text, name) {
-  let t = String(text || "").trim();
-  const prefixes = [name + ":", name + " :", "المريض:", "المريض :", "الطبيب:", "الراوي:"];
-  for (const p of prefixes) if (t.startsWith(p)) t = t.slice(p.length).trim();
-  return t.replace(/^["«»\s]+/, "").replace(/["»\s]+$/, "").trim();
-}
-
-function cleanText(t, name, keepLines) {
-  let s = String(t || "").replace(/\[[ \t]*[ABab][ \t]*\]/g, " ");
-  s = s.split(/^\s*الراوي\s*:/).join(" ");
-  if (keepLines) {
-    s = s.replace(/[ \t]{2,}/g, " ").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").replace(/^[ \t]+|[ \t]+$/g, "");
-    return stripNamePrefix(s, name);
-  }
-  return stripNamePrefix(s.replace(/\s*\n\s*/g, " ").replace(/[ \t]{2,}/g, " ").trim(), name);
-}
-
-function parseReply(raw, name, fallbackMode) {
-  const def = fallbackMode === "exam" ? "exam" : fallbackMode === "eval" ? "eval" : "patient";
-  const tagRe = /^[ \t]*\[[ \t]*(فحص|كلام|تقييم)[ \t]*\]/;
-  const t = String(raw || "").trim();
-  const first = t.match(tagRe);
-  const tagMode = m => (m === "فحص" ? "exam" : m === "تقييم" ? "eval" : "patient");
-  let mode = first ? tagMode(first[1]) : def;
-  let body = first ? t.slice(first[0].length) : t;
-
-  const re = /\[[ \t]*(فحص|كلام|تقييم)[ \t]*\]/g;
-  const parts = [];
-  let curMode = mode, curIdx = 0, m;
-  while ((m = re.exec(body)) !== null) {
-    const seg = cleanText(body.slice(curIdx, m.index), name, curMode === "eval");
-    if (seg) parts.push({ mode: curMode, text: seg });
-    curMode = tagMode(m[1]);
-    curIdx = m.index + m[0].length;
-  }
-  const tail = cleanText(body.slice(curIdx), name, curMode === "eval");
-  if (tail) parts.push({ mode: curMode, text: tail });
-  if (!parts.length) parts.push({ mode: mode, text: "" });
-  return { mode: parts[0].mode, parts: parts, text: parts.map(p => p.text).join("\n") };
-}
-
-function casePrefix(withDiag) {
-  const p = state.patient;
+// محرك الاجابات المحلي الذكي (بديل الـ API)
+function generateLocalResponse(question) {
+  const q = question.toLowerCase();
   const c = state.caseData;
   const s = c.story;
-  const e = c.exam;
-  const v = e.vitals || null;
-  const extraExams = (e.extra && e.extra.length)
-    ? "\n\nفحوص خاصة لهذه الحالة (لا تُذكر نتيجة أي منها إلا إذا طلب الطبيب ذلك الفحص بالاسم أو بمعنى قريب منه — وللفحص المطلوب فقط):\n" +
-      e.extra.map(x => "- المفتاح: «" + x.label + "» — يُطلب عادةً بصيغة: " + x.q + "\n  النتيجة: " + x.find).join("\n")
-    : "";
-  const diagLine = withDiag
-    ? "\n\nالتشخيص الصحيح الصريح (سرّي للغاية: يُذكر فقط في وضع التقييم/المدرّب، ولا يُذكر إطلاقاً في أي رد موجّه للطبيب أثناء الجلسة، ولا يُستنتج منه أي تلميح في وضع المريض): " + c.diag
-    : "";
-  const log = state.messages
-    .map(m => (m.role === "doctor" ? "الطبيب: " : m.mode === "exam" ? "[فحص] " : p.name + ": ") + m.text)
-    .join("\n");
-  return RULES + `
-
-<ملفي السري>
-الاسم: ${p.name}
-العمر: ${p.age} سنة
-الجنس: ${p.sex === "female" ? "أنثى" : "ذكر"}
-
-الشكوى الرئيسية: ${c.cc}
-
-تاريخ المرض الحالي (القصة): ${s.hpi}
-الأمراض السابقة (PMH): ${s.pmh}
-العمليات السابقة (PSH): ${s.psh}
-التاريخ العائلي (FH): ${s.fh}
-الأدوية والحساسية (DH): ${s.meds}
-التاريخ الاجتماعي (SH): ${s.sh}
-التاريخ النسائي والتوليدي (OB/GYN): ${c.obgyn ? c.obgyn : (c.sex === "female" ? "غير مُدوَّن — إذا سُئلتِ عن هذا القسم فاختاري جواباً معقولاً وثبّتِ عليه." : "لا ينطبق — المريض ذكر.")}
-تفاصيل إضافية للثبات: ${s.extra}
-
-نتائج الفحص (للراوي السريري فقط - لا تُذكر للتطوع ولا تُعرض دفعة واحدة):
-- الرأس والعنق: ${e.head}
-- البطن: ${e.abd}
-- الأطراف العلوية: ${e.upper}
-- الأطراف السفلية: ${e.lower}
-
-العلامات الحيوية (Vital Signs) — لا تُذكر إطلاقاً إلا إذا طلب الطبيب قياسها صراحةً، وعندها تُذكر الأربعة كاملة بصفتك راوياً سريرياً تحت وسم [فحص]، بعربية طبية موجزة بلا أي حرف إنجليزي:
-- ضغط الدم (BP): ${v ? v.bp : "غير مُدوَّن"} ملم زئبق
-- معدّل النبض (HR): ${v ? v.hr : "غير مُدوَّن"} نبضة/دقيقة
-- معدّل التنفس (RR): ${v ? v.rr : "غير مُدوَّن"} نفس/دقيقة
-- درجة الحرارة (Temp): ${v ? v.temp : "غير مُدوَّن"} درجة مئوية${v && v.extra ? "\n- ملاحظة على العلامات الحيوية: " + v.extra : ""}${extraExams}${diagLine}
-</ملفي السري>
-
-<المحادثة>
-${log}
-</المحادثة>
-
-`;
-}
-
-function buildInstruction(expectExam) {
-  const p = state.patient;
-  let task;
-  if (expectExam === "vitals") {
-    task = "المهمة: الطبيب يريد قياس العلامات الحيوية للمريض الآن (Blood Pressure / Heart Rate / Respiratory Rate / Temperature). اخرج كلياً من دور المريض واكتب بصفتك راوياً سريرياً وبالوسم [فحص] القيم الأربعة كاملة بصيغة طبية عربية موجزة: ضغط الدم ثم معدّل النبض ثم معدّل التنفس ثم درجة الحرارة، مأخوذة حرفياً من بند «العلامات الحيوية» في ملفك السري، مع أي ملاحظة مذكورة فيه عن العلامات الحيوية. **لا تذكر أي نتيجة من نتائج الفحص الجهازي (الرأس والعنق، البطن، الأطراف) ولا أي تشخيص ولا أي مقدمة، ولا تكتب أي حرف إنجليزي.**";
-  } else if (expectExam) {
-    task = "المهمة: الطبيب يريد فحص منطقة من جسم المريض الآن (أو فحصاً خاصاً، أو استقصاء/تحليل مذكور في ملفك السري). اخرج كلياً من دور المريض واكتب نتائج ذلك الفحص فقط بصفتك راوياً سريرياً بلغة طبية موجزة، وابدأ الرد إلزامياً بالوسم [فحص] لا بالوسم [كلام]، دون ذكر أي تشخيص ودون أي مقدمات. اذكر فقط المنطقة أو الفحص الذي طلبه الطبيب في آخر رسالة، **ولا تذكر أي رقم من العلامات الحيوية داخل نتائج الفحص الجهازي**.";
-  } else {
-    task = "المهمة: اكتب الآن رد " + p.name + " على آخر سؤال من الطبيب. ابدأ الرد بالوسم [كلام]، وكلام المريض فقط دون كتابة اسمه، وباختصار وواقعية حسب القواعد. وإذا كان الطبيب قد طلب فحصاً أو استقصاءً في آخر رسالة فتصرف كراوٍ سريري بالوسم [فحص].";
+  
+  // هل هو طلب فحص؟
+  if (q.includes("ضغط") || q.includes("نبض") || q.includes("حرارة") || q.includes("حيوية")) {
+    state.historyAsked.vitals = true;
+    const v = c.exam.vitals;
+    return { mode: "exam", text: `الضغط: ${v.bp}\nالنبض: ${v.hr}\nالتنفس: ${v.rr}\nالحرارة: ${v.temp} \n${v.extra ? v.extra : ""}` };
   }
-  return casePrefix(false) + task;
+  if (q.includes("بطن")) return { mode: "exam", text: c.exam.abd };
+  if (q.includes("رأس") || q.includes("عنق") || q.includes("راس")) return { mode: "exam", text: c.exam.head };
+  if (q.includes("علوي") || q.includes("يد") || q.includes("ذراع")) return { mode: "exam", text: c.exam.upper };
+  if (q.includes("سفلي") || q.includes("رجل") || q.includes("ساق") || q.includes("قدم")) return { mode: "exam", text: c.exam.lower };
+  
+  // فحوصات خاصة
+  if (c.exam.extra) {
+    for (let ex of c.exam.extra) {
+      // بحث بسيط بكلمات الفحص
+      const words = ex.label.split(" ").filter(w => w.length > 3);
+      if (words.some(w => q.includes(w))) return { mode: "exam", text: ex.find };
+    }
+  }
+
+  // اسئلة التاريخ المرضي (Q&A)
+  if (q.includes("عمليات") || q.includes("جراح")) { state.historyAsked.psh = true; return { mode: "patient", text: s.psh }; }
+  if (q.includes("مزمن") || q.includes("أمراض") || q.includes("ضغط") || q.includes("سكر") || q.includes("ربو")) { state.historyAsked.pmh = true; return { mode: "patient", text: s.pmh }; }
+  if (q.includes("عائل") || q.includes("أهل") || q.includes("وراث")) { state.historyAsked.fh = true; return { mode: "patient", text: s.fh }; }
+  if (q.includes("أدوية") || q.includes("علاج") || q.includes("حساسية") || q.includes("دوا")) { state.historyAsked.meds = true; return { mode: "patient", text: s.meds }; }
+  if (q.includes("تدخين") || q.includes("كحول") || q.includes("عمل") || q.includes("شغل") || q.includes("رياضة")) { state.historyAsked.sh = true; return { mode: "patient", text: s.sh }; }
+  if (q.includes("حمل") || q.includes("ولادة") || q.includes("دورة") || q.includes("إجهاض")) { 
+    state.historyAsked.obgyn = true;
+    return { mode: "patient", text: c.obgyn ? c.obgyn : (c.sex === "male" ? "يا دكتور أنا رجل!" : "لا يوجد شيء من هذا.") }; 
+  }
+  
+  // HPI
+  if (q.includes("متى") || q.includes("كيف") || q.includes("مكان") || q.includes("ينتشر") || q.includes("يزيد") || q.includes("يخف") || q.includes("غثيان") || q.includes("ترجيع")) {
+    state.historyAsked.hpi = true;
+    return { mode: "patient", text: s.hpi };
+  }
+  
+  if (q.includes("شكوى") || q.includes("تشكي") || q.includes("يوجعك")) return { mode: "patient", text: c.cc };
+
+  // Fallback
+  return { mode: "patient", text: "والله يا دكتور ماني متأكد من قصدك. تقدر تسألني عن أعراضي بالتفصيل، أو عن أمراضي السابقة، أدويتي، أو عملياتي." };
 }
 
-const SHEET_LABELS = {
-  sheet_vitals: "العلامات الحيوية (Vital Signs)",
-  sheet_cc: "الشكوى الرئيسية",
-  sheet_hpi: "تاريخ المرض الحالي (HPI)",
-  sheet_pmh: "الأمراض السابقة والربو (PMH)",
-  sheet_psh: "العمليات ونقل الدم (PSH)",
-  sheet_fh: "التاريخ العائلي (FH)",
-  sheet_meds: "الأدوية والحساسية (DH)",
-  sheet_sh: "التاريخ الاجتماعي والسلوكي (SH)",
-  sheet_obgyn: "التاريخ النسائي والتوليدي (OB/GYN)",
-  sheet_dx: "التشخيص المبدئي",
-  sheet_exam_head: "فحص الرأس والعنق",
-  sheet_exam_abd: "فحص البطن",
-  sheet_exam_upper: "فحص الأطراف العلوية",
-  sheet_exam_lower: "فحص الأطراف السفلية",
-  sheet_exam_other: "فحوص خاصة أخرى"
-};
-
-function sheetSnapshot() {
-  const rows = [];
-  sheetFields.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.value.trim()) rows.push("- " + (SHEET_LABELS[id] || id) + ": " + el.value.trim());
-  });
-  return rows.join("\n");
-}
-
-function buildEvalInstruction() {
-  const doctorMsgs = state.messages.filter(m => m.role === "doctor" && !m.scripted).map(m => m.text);
-  const rawList = doctorMsgs.length
-    ? doctorMsgs.map((t, i) => (i + 1) + ". «" + t + "»").join("\n")
-    : "(لم يكتب الطبيب أي سؤال حتى الآن.)";
-  const sheet = sheetSnapshot();
-  const sheetBlock = "\n\n<ورقة المريض كما ملأها الطبيب>\n" + (sheet || "(فارغة — لم يكتب الطبيب شيئاً في ورقة المريض.)") + "\n</ورقة المريض كما ملأها الطبيب>";
-  const sheetTask = sheet
-    ? "\n\nADDITIONAL ANNEXE (mandatory ONLY because the patient sheet is not empty): at the **very end** of the report — i.e. after section «4) الخلاصة والخطوات التالية» — add a final extra section whose heading is exactly «## مراجعة ورقة المريض (Patient Sheet Review)», 2 to 4 lines only, **بالعربية مع إبقاء المصطلحات الطبية بالإنجليزية**: assess how accurate the doctor's notes on the patient sheet are compared with the patient's file and the conversation, and name the important fields they left empty or filled in wrongly. Never delete this annexe, never insert it between the four main sections, and never renumber the main sections."
-    : "\n\nNOTE: the patient sheet is completely empty — do not write any section about it, and only mention briefly in «النواقص السريرية» that the doctor recorded nothing on the patient sheet if that is relevant.";
-  const vitalsBlock = "\n\n<هل طلب الطبيب العلامات الحيوية؟>\n" + (state.vitalsTaken
-    ? "نعم — طلب الطبيب قياس العلامات الحيوية خلال الجلسة. اذكر ذلك ضمن نقاط القوة (Strengths)، ولا تدرج نقص العلامات الحيوية في قسم النواقص السريرية."
-    : "لا — لم يطلب الطبيب قياس العلامات الحيوية (Blood Pressure / Heart Rate / Respiratory Rate / Temperature) إطلاقاً خلال هذه الجلسة. هذا نقص سريري جسيم (Major Missed Point) ويجب ذكره صراحةً في قسم «## 2) النواقص السريرية (Clinical Gaps — History Taking)» ثم أيضاً ضمن «### المعلومات الناقصة الحرجة (Critical Missing Information)».") + "\n</هل طلب الطبيب العلامات الحيوية؟>";
-  return casePrefix(true) +
-    "\n<أسئلة الطبيب كما وردت حرفياً — the doctor's questions, verbatim (uncorrected raw text, for section 3)>\n" + rawList + "\n</أسئلة الطبيب كما وردت حرفياً — verbatim doctor questions>" + sheetBlock + vitalsBlock + "\n\n" + EVAL_TASK + sheetTask;
-}
-
-function buildEducatorInstruction() {
-  return casePrefix(true) + "\n" + EDUCATOR_TASK;
-}
-
-function isEvalCommand(text) {
-  const raw = String(text || "").trim();
-  if (!raw) return false;
-  const norm = raw.toLowerCase().replace(/[_\-.]/g, " ").replace(/\s+/g, " ").trim();
-  if (/\bevaluate\s*history\b/.test(norm) || /\bevaluate\b/.test(norm)) return true;
-  const en = ["i have finished", "i finished", "ive finished", "i'm done", "im done", "i am done", "finished the history", "finish the history", "that's all", "end session", "you can evaluate", "ready to evaluate", "evaluate me", "start evaluation", "do the evaluation"];
-  if (en.some(p => norm.includes(p))) return true;
-  const ar = raw.replace(/[\u064B-\u0652\u0640]/g, "")
-    .replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه")
-    .replace(/[.،,!؟?؛;]/g, " ").replace(/\s+/g, " ").trim();
-  const arPhrases = [
-    "انتهيت من اخذ السيره", "انتهيت من اخذ التاريخ", "انتهيت من السيره المرضيه", "انتهيت من السيره",
-    "انتهيت من التاريخ المرضي", "خلصت السيره", "خلصت التاريخ", "خلصت من السيره", "انتهت اسئلتي",
-    "خلصت اسئلتي", "ما عندي اسئله اخرى", "ما عندي اسئله اكثر", "نهايه الجلسه", "قيمني", "قيم ادائي",
-    "تقييم الاداء", "اعطني التقييم", "ابدأ التقييم", "ابدا التقييم", "التقييم من فضلك", "خلصت الاسئله",
-    "انتهيت من كل شي", "انتهيت من الفحص الكامل"
-  ];
-  if (arPhrases.some(p => ar.includes(p))) return true;
-  const shortBare = ["انتهيت", "خلصت", "تم", "كافي", "خلصنا", "انتهينا", "evaluate", "done", "finished"];
-  return ar.length <= 14 && shortBare.some(p => ar === p || norm === p);
-}
-
-function looksLikeExamRequest(text) {
-  return /فحص|أفحص|افحص|نفحص|يفحص|examin|exam\b/i.test(String(text || ""));
-}
-
-function looksLikeVitalsRequest(text) {
-  const t = String(text || "").replace(/[\u064B-\u0652\u0640]/g, "").replace(/[أإآٱ]/g, "ا");
-  if (/علامات[كهي]?\s*ال?حيوي|vital\s*signs?|\bvitals\b/i.test(t)) return true;
-  const vitalWord = /(ضغط|نبض|حرار|تنفس|blood pressure|heart rate|pulse|temperature|respiratory rate|\bbp\b|\bhr\b|\brr\b|\btemp\b)/i;
-  if (!vitalWord.test(t)) return false;
-  if (/هل\s*(عندك|عندكم|تحس|تحسون|تعاني|تشعر|يوجد|فيك|انت|هي|هو)/.test(t)) return false;
-  const askOrMeasure = /قياس|قيس|اقيس|اطلب|افحص|سافحص|اريد|اعطني|خذ|اخذ|measure|check|take|request|كم|كام|شكد|ما |شنو|وش |ماهي|ماهو|درجه|رقم|اعرض|قل لي/i;
-  return askOrMeasure.test(t);
-}
-
-async function sendQuestion(rawText, forceExam) {
-  const text = String(rawText || "").trim();
-  if (!text || state.busy || !state.caseData) return;
-
-  if (!state.evaluated && isEvalCommand(text)) { return runEvaluation(text); }
-
-  const vitalsMatch = forceExam === "vitals" || looksLikeVitalsRequest(text);
-  if (vitalsMatch) state.vitalsTaken = true;
-  const expectExam = vitalsMatch ? "vitals" : ((!!forceExam || looksLikeExamRequest(text)) ? "exam" : false);
-  const mode = state.evaluated ? "edu" : (expectExam ? "exam" : "ask");
-  const fallback = mode === "edu" ? "eval" : (expectExam ? "exam" : "patient");
-
+function sendQuestion(text) {
+  if (!text.trim() || state.evaluated) return;
   addBubble("doctor", text);
-  state.messages.push({ role: "doctor", text: text });
   doctorInputEl.value = "";
-  setBusy(true);
-
-  const bubble = addTypingBubble(mode === "edu" ? "eval" : undefined);
-  let started = false;
-
-  try {
-    const res = await root.generateText({
-      instruction: mode === "edu" ? buildEducatorInstruction() : buildInstruction(expectExam),
-      stopSequences: mode === "edu" ? [] : ["\nالطبيب:", "\nDoctor:"],
-      onChunk: (d) => {
-        if (!started) { started = true; bubble.classList.remove("typing"); renderStreaming(bubble, "", fallback); }
-        renderStreaming(bubble, parseReply(d.fullTextSoFar, state.patient.name, fallback).text, fallback);
-        scrollChat();
-      }
-    });
-    const parsed = parseReply(res.text, state.patient.name, fallback);
-    bubble.remove();
-    const parts = parsed.parts.filter(p => p.text);
-    if (!parts.length) parts.push({ mode: parsed.mode, text: mode === "edu" ? "لم أفهم طلبك، أعد صياغته." : "معليش، ما فهمت السؤال، ممكن تعيده؟" });
-    parts.forEach(p => {
-      addBubble(p.mode === "eval" ? "evaluator" : "patient", p.text, p.mode);
-      state.messages.push({ role: "patient", text: p.text, mode: p.mode });
-    });
-  } catch (err) {
-    bubble.classList.remove("typing");
-    bubble.textContent = "معليش، ما سمعتك زين... ممكن تعيد السؤال؟";
-  } finally {
-    setBusy(false);
-    scrollChat();
+  sendBtnEl.disabled = true;
+  
+  // محاكاة تأخير الكتابة
+  setTimeout(() => {
+    const res = generateLocalResponse(text);
+    addBubble("patient", res.text, res.mode);
+    sendBtnEl.disabled = false;
     doctorInputEl.focus();
-  }
+  }, 800);
 }
 
-function applyEvaluatedUI() {
-  if (evalBannerEl) evalBannerEl.hidden = !state.evaluated;
-  if (evalBtnEl) {
-    evalBtnEl.disabled = state.busy || state.evaluated;
-    evalBtnEl.textContent = state.evaluated ? "✅ تم التقييم" : "🎓 إنهاء الجلسة وتقييم الأداء";
-  }
-  if (doctorInputEl) doctorInputEl.setAttribute("placeholder", state.evaluated
-    ? "وضع المدرّب: اسأل عن أي نقطة في التقرير، أو اطلب فحصاً لشرح دلالته..."
-    : DOCTOR_PLACEHOLDER);
-}
-
-async function runEvaluation(triggerText) {
-  if (!state.caseData || state.busy) return;
-  addBubble("doctor", triggerText);
-  state.messages.push({ role: "doctor", text: triggerText });
-  doctorInputEl.value = "";
+function runEvaluation() {
+  if (state.evaluated) return;
   state.evaluated = true;
-  applyEvaluatedUI();
-  addSystemNote("— انتهت جلسة أخذ السيرة • بدأ تقييم الأداء —");
-  setBusy(true);
-
-  const bubble = addTypingBubble("eval");
-  let started = false;
-  try {
-    const res = await root.generateText({
-      instruction: buildEvalInstruction(),
-      stopSequences: [],
-      onChunk: (d) => {
-        if (!started) { started = true; bubble.classList.remove("typing"); bubble.innerHTML = ""; }
-        renderStreaming(bubble, parseReply(d.fullTextSoFar, state.patient.name, "eval").text, "eval");
-        scrollChat();
-      }
-    });
-    const parsed = parseReply(res.text, state.patient.name, "eval");
-    bubble.remove();
-    const parts = parsed.parts.filter(p => p.text);
-    if (!parts.length) parts.push({ mode: "eval", text: "تعذّر توليد تقرير التقييم، اضغط زر التقييم مرة أخرى." });
-    parts.forEach(p => {
-      addBubble(p.mode === "eval" ? "evaluator" : "patient", p.text, p.mode);
-      state.messages.push({ role: "patient", text: p.text, mode: p.mode });
-    });
-  } catch (err) {
-    bubble.classList.remove("typing");
-    bubble.innerHTML = mdToHtml("تعذّر إنشاء تقرير التقييم. تحقق من الاتصال ثم أعد المحاولة.");
-  } finally {
-    setBusy(false);
-    applyEvaluatedUI();
-    scrollChat();
-    revealAnswer();
-    addSystemNote("— يمكنك الآن سؤال المدرّب عن أي نقطة، أو بدء حالة جديدة —");
-  }
-}
-
-function clearSheet() { sheetFields.forEach(id => { document.getElementById(id).value = ""; }); }
-
-function casePool() {
-  const cat = catFilterEl.value;
-  const all = CASES.map((c, i) => i);
-  if (!cat || cat === "all") return all;
-  const filtered = all.filter(i => CASES[i].cat === cat);
-  return filtered.length ? filtered : all;
-}
-
-function updateCaseCount() {
-  const pool = casePool();
-  const total = CASES.length;
-  caseCountEl.textContent = pool.length === total ? total + " حالة" : pool.length + " من " + total + " حالة";
+  evalBtnEl.textContent = "✅ تم التقييم";
+  evalBtnEl.disabled = true;
+  
+  const c = state.caseData;
+  let report = `<b>التشخيص الصحيح:</b> ${c.diag}\n\n`;
+  report += `<b>تقييم الأسئلة التي سألتها:</b>\n`;
+  report += state.historyAsked.vitals ? "✅ طلبت العلامات الحيوية.\n" : "❌ نسيت طلب العلامات الحيوية (Vital Signs).\n";
+  report += state.historyAsked.pmh ? "✅ سألت عن الأمراض السابقة.\n" : "❌ نسيت السؤال عن الأمراض السابقة (PMH).\n";
+  report += state.historyAsked.psh ? "✅ سألت عن العمليات الجراحية.\n" : "❌ نسيت السؤال عن العمليات السابقة (PSH).\n";
+  report += state.historyAsked.meds ? "✅ سألت عن الأدوية والحساسية.\n" : "❌ نسيت السؤال عن الأدوية (Medications).\n";
+  
+  report += `\n<i>ملاحظة: هذا التقييم مبرمج محلياً بناءً على الكلمات المفتاحية.</i>`;
+  
+  setTimeout(() => {
+    addBubble("evaluator", report, "eval");
+    document.getElementById("revealBtn").click();
+  }, 600);
 }
 
 function startNewCase() {
-  const pool = casePool();
-  if (!pool.length) return;
-  let idx = pool[randInt(0, pool.length - 1)];
-  if (pool.length > 1 && idx === state.caseIdx) idx = pool[(pool.indexOf(idx) + 1) % pool.length];
-  state.caseIdx = idx;
-  const c = CASES[idx];
-  const name = pick(namePool(c.sex));
-  const age = randInt(c.ageMin, c.ageMax);
-
+  const cat = document.getElementById("catFilterEl").value;
+  const filtered = cat === "all" ? CASES : CASES.filter(c => c.cat === cat);
+  const c = filtered[randInt(0, filtered.length - 1)];
+  
   state.caseData = c;
-  state.patient = { name: name, age: age, sex: c.sex };
-  state.messages = [];
   state.evaluated = false;
-  state.vitalsTaken = false;
-  setBusy(false);
-
-  patientNameEl.textContent = name;
-  patientAgeEl.textContent = age + " سنة";
-  patientSexEl.textContent = c.sex === "female" ? "أنثى" : "ذكر";
-  patientCatEl.textContent = c.cat || "متنوع";
-  patientAvatarEl.textContent = c.sex === "female" ? "👩" : "👨";
-  ccEl.textContent = c.cc;
-  document.getElementById("obgynBlock").hidden = c.sex !== "female";
-
+  state.historyAsked = {};
+  
+  const name = pick(c.sex === "male" ? MALE_NAMES : FEMALE_NAMES);
+  const age = randInt(c.ageMin, c.ageMax);
+  
+  document.getElementById("patientNameEl").textContent = name;
+  document.getElementById("patientAgeEl").textContent = age + " سنة";
+  document.getElementById("patientSexEl").textContent = c.sex === "male" ? "ذكر" : "أنثى";
+  document.getElementById("patientCatEl").textContent = c.cat || "عام";
+  document.getElementById("patientAvatar").textContent = c.sex === "female" ? "👩" : "👨";
+  document.getElementById("ccEl").textContent = c.cc;
+  
   chatWindowEl.innerHTML = "";
-  const greeting = "مرحباً " + name + "، أنا الطبيب المعالج. تفضل، ما الذي يشغلك اليوم؟";
-  addBubble("doctor", greeting);
-  addBubble("patient", c.cc);
-  state.messages.push({ role: "doctor", text: greeting, scripted: true });
-  state.messages.push({ role: "patient", text: c.cc, mode: "patient" });
-
-  clearSheet();
-  document.getElementById("examSheet").open = false;
-  answerPanelEl.hidden = true;
-  answerPanelEl.innerHTML = "";
-  doctorInputEl.value = "";
-  updateCaseCount();
-  buildExams();
-  buildChips();
-  applyEvaluatedUI();
-  doctorInputEl.focus();
+  addBubble("doctor", `مرحباً ${name}، أنا الطبيب المعالج. تفضل، ما الذي يشغلك اليوم؟`);
+  addBubble("patient", c.cc, "patient");
+  
+  document.getElementById("answerPanel").hidden = true;
+  evalBtnEl.disabled = false;
+  evalBtnEl.textContent = "🎓 إنهاء الجلسة وتقييم الأداء";
 }
 
-function revealAnswer() {
-  if (!state.caseData) return;
-  const c = state.caseData;
-  const s = c.story;
-  const e = c.exam;
-  const rows = [
-    ["تاريخ المرض الحالي (HPI)", s.hpi],
-    ["الأمراض السابقة (PMH)", s.pmh],
-    ["العمليات السابقة (PSH)", s.psh],
-    ["التاريخ العائلي (FH)", s.fh],
-    ["الأدوية والحساسية (DH)", s.meds],
-    ["التاريخ الاجتماعي (SH)", s.sh]
-  ];
-  if (c.obgyn) rows.push(["التاريخ النسائي والتوليدي (OB/GYN)", c.obgyn]);
-  rows.push(
-    ["تفاصيل إضافية", s.extra],
-    ["فحص الرأس والعنق", e.head],
-    ["فحص البطن", e.abd],
-    ["فحص الأطراف العلوية", e.upper],
-    ["فحص الأطراف السفلية", e.lower]
-  );
-  if (e.vitals) {
-    const v = e.vitals;
-    rows.push(["العلامات الحيوية (Vital Signs)", "ضغط الدم " + v.bp + " • النبض " + v.hr + " • التنفس " + v.rr + " • الحرارة " + v.temp + (v.extra ? " • " + v.extra : "")]);
-  }
-  (e.extra || []).forEach(x => rows.push(["فحص خاص — " + x.label, x.find]));
-  answerPanelEl.innerHTML =
-    '<h3>الإجابة النموذجية</h3>' +
-    '<div class="diag-line">التشخيص: ' + c.diag + (c.cat ? ' <span class="diag-cat">[' + c.cat + ']</span>' : '') + '</div>' +
-    rows.map(r => '<div class="answer-row"><b>' + r[0] + ':</b> ' + r[1] + '</div>').join("");
-  answerPanelEl.hidden = false;
-  answerPanelEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
-
-function buildChips() {
-  const chipsBodyEl = document.getElementById("chipsBody");
-  chipsBodyEl.innerHTML = "";
-  const list = CHIPS.concat(state.caseData && state.caseData.obgyn ? OBGYN_CHIPS : []);
-  list.forEach(q => {
-    const b = document.createElement("button");
-    b.className = "chip";
-    b.type = "button";
-    b.textContent = q;
-    b.addEventListener("click", () => { doctorInputEl.value = q; doctorInputEl.focus(); });
-    chipsBodyEl.appendChild(b);
-  });
-}
-
-function addExamButton(grid, label, q, isVitals) {
-  const b = document.createElement("button");
-  b.className = "exam-btn" + (isVitals ? " vitals-btn" : "");
-  b.type = "button";
-  b.textContent = label;
-  b.addEventListener("click", () => sendQuestion(q, isVitals ? "vitals" : true));
-  grid.appendChild(b);
-}
-
-function buildExams() {
-  const grid = document.getElementById("examGrid");
-  grid.innerHTML = "";
-  EXAMS.forEach(ex => addExamButton(grid, ex.label, ex.q, ex.vitals));
-  const extras = (state.caseData && state.caseData.exam && state.caseData.exam.extra) || [];
-  extras.forEach(x => addExamButton(grid, "🔬 " + x.label, x.q));
-}
-
-function initCatFilter() {
-  catFilterEl.innerHTML = "";
-  const allOpt = document.createElement("option");
-  allOpt.value = "all";
-  allOpt.textContent = "كل التخصصات (" + CASES.length + ")";
-  catFilterEl.appendChild(allOpt);
-  CATEGORIES.forEach(cat => {
-    const n = CASES.filter(c => c.cat === cat).length;
-    const o = document.createElement("option");
-    o.value = cat;
-    o.textContent = cat + " (" + n + ")";
-    catFilterEl.appendChild(o);
-  });
-}
-
-sendBtnEl.addEventListener("click", () => sendQuestion(doctorInputEl.value));
-doctorInputEl.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    sendQuestion(doctorInputEl.value);
-  }
-});
+// تهيئة الأزرار
+document.getElementById("sendBtn").addEventListener("click", () => sendQuestion(doctorInputEl.value));
+doctorInputEl.addEventListener("keydown", (e) => { if(e.key === "Enter") sendQuestion(doctorInputEl.value); });
 document.getElementById("newCaseBtn").addEventListener("click", startNewCase);
-document.getElementById("revealBtn").addEventListener("click", revealAnswer);
-document.getElementById("clearSheetBtn").addEventListener("click", clearSheet);
-if (evalBtnEl) evalBtnEl.addEventListener("click", () => { if (!state.evaluated) runEvaluation("EVALUATE_HISTORY"); });
-catFilterEl.addEventListener("change", startNewCase);
+document.getElementById("evalBtn").addEventListener("click", runEvaluation);
 
-initCatFilter();
+document.getElementById("revealBtn").addEventListener("click", () => {
+  const c = state.caseData;
+  const p = document.getElementById("answerPanel");
+  p.hidden = false;
+  p.innerHTML = `<h3>الإجابة النموذجية</h3>
+    <div class="diag-line">التشخيص: ${c.diag}</div>
+    <div class="answer-row"><b>القصة (HPI):</b> ${c.story.hpi}</div>
+    <div class="answer-row"><b>الأمراض (PMH):</b> ${c.story.pmh}</div>
+    <div class="answer-row"><b>العمليات (PSH):</b> ${c.story.psh}</div>
+    <div class="answer-row"><b>الأدوية:</b> ${c.story.meds}</div>
+    <div class="answer-row"><b>الفحص (العلامات):</b> ${c.exam.vitals.bp} | ${c.exam.vitals.hr}</div>`;
+});
+
+// تهيئة الفلاتر والأزرار الجاهزة
+const catFilter = document.getElementById("catFilterEl");
+catFilter.innerHTML = '<option value="all">كل التخصصات</option>';
+[...new Set(CASES.map(c => c.cat))].forEach(cat => {
+  if(cat) catFilter.innerHTML += `<option value="${cat}">${cat}</option>`;
+});
+catFilter.addEventListener("change", startNewCase);
+
+const chipsBody = document.getElementById("chipsBody");
+CHIPS.forEach(q => {
+  const btn = document.createElement("button");
+  btn.className = "chip"; btn.textContent = q;
+  btn.onclick = () => { doctorInputEl.value = q; doctorInputEl.focus(); };
+  chipsBody.appendChild(btn);
+});
+
+const examGrid = document.getElementById("examGrid");
+EXAMS.forEach(ex => {
+  const btn = document.createElement("button");
+  btn.className = "exam-btn" + (ex.key === "vitals" ? " vitals-btn" : "");
+  btn.textContent = ex.label;
+  btn.onclick = () => sendQuestion(ex.q);
+  examGrid.appendChild(btn);
+});
+
+// بدء التشغيل
 startNewCase();
 </script>
-
-<style>
-  :root {
-    --navy: #12305c;
-    --navy-2: #1e4b8a;
-    --teal: #0f766e;
-    --ink: #1f2937;
-    --muted: #64748b;
-    --line: #e2e8f0;
-    --bg: #eef3f9;
-    --card: #ffffff;
-    --danger: #b91c1c;
-  }
-  * { box-sizing: border-box; }
-  [hidden] { display: none !important; }
-  html { min-height: 100%; }
-  body {
-    margin: 0;
-    padding: 0;
-    background: var(--bg);
-    color: var(--ink);
-    direction: rtl;
-    text-align: right;
-    font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-  }
-  #app {
-    flex: 1 0 auto;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: clamp(10px, 1.4vw, 22px);
-    display: flex;
-    flex-direction: column;
-    gap: clamp(12px, 1.2vw, 18px);
-    min-height: 0;
-  }
-
-  .topbar {
-    display: flex; flex-wrap: wrap; gap: 14px;
-    align-items: center; justify-content: space-between;
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
-    color: #fff; border-radius: 16px; padding: 18px 22px;
-    box-shadow: 0 10px 24px rgba(18, 48, 92, 0.25);
-  }
-  .brand { display: flex; align-items: center; gap: 14px; }
-  .logo { font-size: 30px; background: rgba(255,255,255,0.16); border-radius: 14px; padding: 8px 12px; }
-  .topbar h1 { margin: 0; font-size: 21px; font-weight: 700; }
-  .topbar p { margin: 4px 0 0; font-size: 13px; opacity: 0.88; }
-  .top-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  .cat-picker {
-    display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.14);
-    border: 1px solid rgba(255,255,255,0.35); border-radius: 10px; padding: 6px 10px; font-size: 13.5px;
-  }
-  .cat-picker span { opacity: 0.85; font-weight: 700; }
-  .cat-picker select {
-    background: #fff; color: var(--navy); border: none; border-radius: 7px; padding: 6px 8px;
-    font-family: inherit; font-size: 13.5px; font-weight: 700; max-width: 220px; cursor: pointer;
-  }
-  .case-count { font-size: 13px; opacity: 0.88; white-space: nowrap; }
-  .cat-pill { background: #dbeafe; color: #1e40af; }
-  .diag-cat { color: #b45309; font-weight: 700; font-size: 13px; }
-
-  .primary-btn {
-    background: #10b981; color: #fff; border: none; border-radius: 10px;
-    padding: 11px 18px; font-family: inherit; font-size: 15px; font-weight: 700;
-    cursor: pointer; transition: transform .15s ease, background .15s ease;
-  }
-  .primary-btn:hover { background: #059669; transform: translateY(-1px); }
-  .ghost-btn {
-    background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.45);
-    border-radius: 10px; padding: 11px 18px; font-family: inherit; font-size: 15px;
-    font-weight: 700; cursor: pointer; transition: background .15s ease;
-  }
-  .ghost-btn:hover { background: rgba(255,255,255,0.22); }
-  .ghost-btn.wide { width: 100%; background: #f1f5f9; color: #334155; border: 1px solid var(--line); }
-  .ghost-btn.wide:hover { background: #e2e8f0; }
-
-  .chat-col { display: flex; flex-direction: column; min-height: 0; }
-  .sheet-col { display: flex; flex-direction: column; min-height: 0; }
-  .layout {
-    flex: 1 1 auto;
-    display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-    gap: clamp(14px, 1.4vw, 20px);
-    align-items: stretch;
-    min-height: 0;
-  }
-
-  .patient-card {
-    display: flex; align-items: center; gap: 14px;
-    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 14px 18px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
-  }
-  .avatar { font-size: 30px; background: #e0ecff; border-radius: 50%; width: 58px; height: 58px; display: flex; align-items: center; justify-content: center; }
-  .patient-meta { flex: 1; }
-  .patient-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .patient-name { font-size: 20px; font-weight: 700; color: var(--navy); }
-  .pill { background: #e2e8f0; color: #334155; border-radius: 20px; padding: 3px 12px; font-size: 13px; font-weight: 700; }
-  .cc-line { margin-top: 8px; font-size: 15px; background: #fef2f2; border: 1px solid #fecaca; color: var(--danger); border-radius: 10px; padding: 8px 12px; }
-  .cc-label { font-weight: 700; }
-
-  .chat-window {
-    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    flex: 1 1 auto; min-height: 340px; overflow-y: auto; padding: 18px; margin-top: 14px;
-    display: flex; flex-direction: column; gap: 12px;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
-  }
-  .chat-window::-webkit-scrollbar { width: 9px; }
-  .chat-window::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; }
-
-  .bubble {
-    max-width: 84%; padding: 11px 16px; border-radius: 16px;
-    line-height: 1.75; font-size: 15px; white-space: pre-wrap; word-wrap: break-word;
-  }
-  .bubble.doctor { background: #0ea5e9; color: #fff; align-self: flex-start; border-bottom-right-radius: 3px; }
-  .bubble.patient { background: #f8fafc; border: 1px solid var(--line); color: #334155; align-self: flex-end; border-bottom-left-radius: 3px; }
-  .bubble.exam { background: #fffbeb; border: 1px solid #fcd34d; color: #4b3a0b; align-self: stretch; max-width: 100%; border-radius: 12px; font-size: 14.5px; }
-  .exam-tag { font-weight: 700; color: #b45309; margin-bottom: 6px; font-size: 13.5px; letter-spacing: .2px; }
-  .bubble-body { white-space: pre-wrap; }
-
-  .bubble.eval {
-    background: #f5f3ff; border: 1px solid #ddd6fe; color: #312e81;
-    align-self: stretch; max-width: 100%; border-radius: 12px; font-size: 14.5px;
-    direction: rtl; text-align: right;
-  }
-  .eval-tag { font-weight: 700; color: #5b21b6; margin-bottom: 8px; font-size: 13.5px; letter-spacing: .2px; }
-  .bubble.eval .bubble-body { white-space: normal; }
-  .bubble.eval .bubble-body h2 {
-    font-size: 16px; margin: 16px 0 6px; color: #4c1d95;
-    border-bottom: 1px solid #ddd6fe; padding-bottom: 4px;
-  }
-  .bubble.eval .bubble-body h2:first-child { margin-top: 0; }
-  .bubble.eval .bubble-body h3 { font-size: 14.5px; margin: 12px 0 5px; color: #5b21b6; }
-  .bubble.eval .bubble-body h4 { font-size: 14px; margin: 10px 0 4px; color: #6d28d9; }
-  .bubble.eval .bubble-body p { margin: 6px 0; line-height: 1.9; }
-  .bubble.eval .bubble-body ul, .bubble.eval .bubble-body ol { margin: 6px 0; padding-inline-start: 24px; }
-  .bubble.eval .bubble-body li { margin: 4px 0; line-height: 1.85; }
-  .bubble.eval .bubble-body strong { color: #4c1d95; }
-  .bubble.eval .bubble-body em { color: #5b21b6; }
-  .bubble.eval .bubble-body code {
-    background: #ede9fe; border-radius: 5px; padding: 1px 6px; font-size: 13px; direction: ltr; unicode-bidi: isolate;
-  }
-  .bubble.eval .bubble-body hr { border: none; border-top: 1px dashed #c4b5fd; margin: 12px 0; }
-  .bubble.eval.typing span { background: #8b5cf6; }
-
-  .sys-note {
-    align-self: center; text-align: center; background: #e2e8f0; color: #475569;
-    font-size: 12.5px; font-weight: 700; border-radius: 999px; padding: 6px 18px;
-  }
-
-  .bubble.typing { display: flex; gap: 6px; align-items: center; }
-  .bubble.typing span {
-    width: 8px; height: 8px; border-radius: 50%; background: #94a3b8;
-    animation: blink 1.2s infinite ease-in-out;
-  }
-  .bubble.typing span:nth-child(2) { animation-delay: .18s; }
-  .bubble.typing span:nth-child(3) { animation-delay: .36s; }
-  @keyframes blink { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
-
-  .composer { display: flex; gap: 10px; margin-top: 14px; align-items: stretch; }
-  .composer textarea {
-    flex: 1; resize: vertical; min-height: 52px; border-radius: 12px; border: 1px solid var(--line);
-    padding: 12px 14px; font-family: inherit; font-size: 15px; line-height: 1.6; background: #fff;
-  }
-  .composer textarea:focus { outline: 2px solid #93c5fd; border-color: #93c5fd; }
-  .send-btn {
-    background: var(--teal); color: #fff; border: none; border-radius: 12px;
-    padding: 0 26px; font-family: inherit; font-size: 16px; font-weight: 700; cursor: pointer;
-    transition: background .15s ease; min-width: 110px;
-  }
-  .send-btn:hover:not(:disabled) { background: #0b5d57; }
-  .send-btn:disabled { background: #94a3b8; cursor: progress; }
-
-  .panel-box { margin-top: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
-  .panel-title { font-size: 13px; color: var(--muted); margin-bottom: 10px; font-weight: 700; }
-
-  .session-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
-  .eval-btn {
-    background: linear-gradient(135deg, #6d28d9 0%, #4f46e5 100%); color: #fff; border: none;
-    border-radius: 12px; padding: 12px 20px; font-family: inherit; font-size: 15px; font-weight: 700;
-    cursor: pointer; box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
-    transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
-  }
-  .eval-btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.07); }
-  .eval-btn:disabled { background: #cbd5e1; color: #475569; box-shadow: none; cursor: default; }
-  .session-hint { font-size: 12.5px; color: var(--muted); line-height: 1.9; }
-  .session-hint code { background: #e2e8f0; border-radius: 5px; padding: 2px 6px; font-size: 12px; color: #334155; }
-
-  .eval-banner {
-    margin-top: 12px; background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3;
-    border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 700; line-height: 1.9;
-    display: flex; gap: 10px; align-items: flex-start;
-  }
-  .eval-banner[hidden] { display: none; }
-
-  .exam-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .exam-btn {
-    background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 10px;
-    padding: 12px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
-    transition: all .15s ease;
-  }
-  .exam-btn:hover { background: #ffedd5; border-color: #fb923c; }
-  .exam-btn:disabled { opacity: .55; cursor: progress; }
-  .exam-btn.vitals-btn {
-    grid-column: 1 / -1;
-    background: #eff6ff; border-color: #93c5fd; color: #1e40af;
-  }
-  .exam-btn.vitals-btn:hover { background: #dbeafe; border-color: #60a5fa; }
-
-  .chips-body { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip {
-    background: #f1f5f9; border: 1px solid var(--line); color: #334155; border-radius: 20px;
-    padding: 7px 13px; font-family: inherit; font-size: 13.5px; cursor: pointer; transition: all .15s ease;
-  }
-  .chip:hover { background: #e0ecff; border-color: #bfdbfe; color: var(--navy); }
-
-  .sheet-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06); }
-  .sheet-card h2 { margin: 0 0 6px; font-size: 18px; color: var(--navy); }
-  .sheet-card label { display: block; margin: 12px 0 5px; font-size: 13.5px; font-weight: 700; color: #334155; }
-  .sheet-card textarea {
-    width: 100%; resize: vertical; border-radius: 10px; border: 1px solid var(--line);
-    padding: 9px 11px; font-family: inherit; font-size: 14px; line-height: 1.6; background: #fbfdff;
-  }
-  .sheet-card textarea:focus { outline: 2px solid #93c5fd; border-color: #93c5fd; }
-  .sheet-card .ghost-btn.wide { margin-top: 14px; }
-
-  .exam-sheet { margin-top: 14px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fbfdff; }
-  .exam-sheet summary { cursor: pointer; font-weight: 700; color: #9a3412; font-size: 14px; }
-  .exam-sheet label { margin-top: 10px; }
-
-  .answer-panel {
-    margin-top: 16px; background: #fffbeb; border: 1px dashed #fbbf24; border-radius: 14px;
-    padding: 16px 18px; box-shadow: 0 4px 14px rgba(180, 83, 9, 0.08);
-  }
-  .answer-panel h3 { margin: 0 0 10px; font-size: 17px; color: #b45309; }
-  .diag-line { background: #fff; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 12px; font-weight: 700; color: #92400e; margin-bottom: 12px; font-size: 16px; }
-  .answer-row { font-size: 14px; line-height: 1.8; color: #4b5563; margin-bottom: 8px; }
-  .answer-row b { color: #92400e; }
-
-  .brand-credit {
-    margin: 6px 0 0 !important; font-size: 13px; opacity: 1 !important;
-    display: inline-block; padding: 3px 12px; border-radius: 999px;
-    background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.32);
-  }
-  .brand-credit b { color: #fff; letter-spacing: .3px; }
-
-  .site-footer {
-    flex: 0 0 auto; display: flex; justify-content: center; align-items: center;
-    padding: 4px 0 8px; margin-top: 2px;
-  }
-  .ig-link {
-    direction: ltr; unicode-bidi: isolate;
-    display: inline-flex; align-items: center; gap: 10px;
-    text-decoration: none; color: var(--navy);
-    background: var(--card); border: 1px solid var(--line); border-radius: 999px;
-    padding: 9px 20px; font-size: 15px; font-weight: 700;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
-    transition: transform .15s ease, box-shadow .15s ease, color .15s ease, border-color .15s ease, background .2s ease;
-  }
-  .ig-link:hover {
-    color: #fff; border-color: transparent; transform: translateY(-1px);
-    background: linear-gradient(135deg, #f58529 0%, #dd2a7b 45%, #8134af 75%, #515bd4 100%);
-    box-shadow: 0 8px 20px rgba(221, 42, 123, 0.28);
-  }
-  .ig-icon { width: 22px; height: 22px; display: block; flex: 0 0 auto; }
-  .ig-user { direction: ltr; unicode-bidi: isolate; letter-spacing: .4px; }
-
-  @media (max-width: 900px) {
-    .layout { grid-template-columns: 1fr; }
-    .chat-window { flex: 0 0 auto; height: 46vh; min-height: 300px; }
-    .topbar { flex-direction: column; align-items: stretch; }
-    .top-actions { justify-content: stretch; }
-    .top-actions button { flex: 1; }
-    .cat-picker { flex: 1 1 100%; justify-content: space-between; order: 1; }
-    .cat-picker select { max-width: none; flex: 1; min-width: 0; }
-    .case-count { flex: 1 1 100%; order: 2; text-align: center; }
-    .top-actions button { flex: 1; order: 3; }
-    .composer { flex-direction: column; }
-    .send-btn { padding: 14px; }
-    .exam-grid { grid-template-columns: 1fr; }
-    .session-bar { flex-direction: column; align-items: stretch; }
-    .eval-btn { width: 100%; }
-    .session-hint { text-align: center; }
-    .bubble.eval .bubble-body ul, .bubble.eval .bubble-body ol { padding-inline-start: 20px; }
-  }
-</style>
 </body>
 </html>
